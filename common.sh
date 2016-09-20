@@ -38,7 +38,7 @@ common_init () {
 			exit 0
 			;;
 			*)
-			echo "Unknown argument: $1"
+			echo "Unknown argument: $1" 1>&2
 			exit 1
 			;;
 		esac
@@ -88,9 +88,9 @@ fetch_web () {
 	local filedest=$(mktemp -p $FETCHCACHE -u)
 	hash=$(wget -O- $1 | tee >(sha256sum | cut -d" " -f1) >$filedest)
 	if [ ! "$hash" == "$2" ]; then
-		echo "Hash mismatch for $filename"
-		echo "  expected: $2"
-		echo "  actual: $hash"
+		echo "Hash mismatch for $filename" 1>&2
+		echo "  expected: $2" 1>&2
+		echo "  actual: $hash" 1>&2
 		rm $filedest
 		return 1
 	else
@@ -119,4 +119,14 @@ package () {
 	rm -f $zipfile
 	zip -9ry $zipfile -- *
 	popd
+}
+
+depend_get_path () {
+	local p="$BUILDBASE/$1-$MINGW_TYPE/pkg"
+	if [ ! -d $p ]; then
+		echo "The dependency $1 needs to be built first" 1>&2
+		return 1
+	else
+		echo $p
+	fi
 }
