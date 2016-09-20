@@ -46,14 +46,16 @@ common_init () {
 	done
 
 	if [ $use64 -eq 1 ]; then
-		MINGW_CC=x86_64-mingw32-gcc
-		MINGW_CXX=x86_64-mingw32-g++
-		MINGW_STRIP=x86_64-mingw32-strip
+		MINGW_PREFIX=x86_64-mingw32
+		MINGW_CC=$MINGW_PREFIX-gcc
+		MINGW_CXX=$MINGW_PREFIX-g++
+		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win64
 	else
-		MINGW_CC=i686-mingw32-gcc
-		MINGW_CXX=i686-mingw32-g++
-		MINGW_STRIP=i686-mingw32-strip
+		MINGW_PREFIX=i686-mingw32
+		MINGW_CC=$MINGW_PREFIX-gcc
+		MINGW_CXX=$MINGW_PREFIX-g++
+		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win32
 	fi
 	MAKE_JOBS=$jobs

@@ -1,0 +1,31 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=1.2.8
+fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
+	36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
+unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
+
+# enably assembly optimizations
+if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
+	asmfile=amd64/amd64-match.S
+	asmdef=-DNO_UNDERLINE
+else
+	asmfile=asm686/match.S
+	asmdef=
+fi
+cp -v contrib/$asmfile match.S
+# build using win32 makefile
+make PREFIX=$MINGW_PREFIX- \
+	LOC="-DASMV $asmdef" OBJA=match.o \
+	-fwin32/Makefile.gcc -j$MAKE_JOBS
+
+make \
+	DESTDIR=$INSTALL_DIR SHARED_MODE=1 \
+	BINARY_PATH=/bin INCLUDE_PATH=/include LIBRARY_PATH=/lib \
+	install -fwin32/Makefile.gcc
+rm -r $INSTALL_DIR/lib/pkgconfig # no pkgconfig on windows
+
+package $pkgver

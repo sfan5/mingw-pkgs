@@ -11,7 +11,7 @@ unpack_tar "libvorbis-$pkgver.tar.xz" --strip-components=1
 oggpath=$(depend_get_path libogg)
 CC=$MINGW_CC \
 OGG_CFLAGS=-I$oggpath/include OGG_LIBS="-L$oggpath/lib -logg" \
-./configure --host=${MINGW_CC%-*} --prefix=/
+./configure --host=$MINGW_PREFIX --prefix=/
 make -j$MAKE_JOBS
 
 make DESTDIR=$INSTALL_DIR install

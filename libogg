@@ -8,7 +8,7 @@ fetch_web "http://downloads.xiph.org/releases/ogg/libogg-$pkgver.tar.xz" \
 	3f687ccdd5ac8b52d76328fbbfebc70c459a40ea891dbf3dccb74a210826e79b
 unpack_tar "libogg-$pkgver.tar.xz" --strip-components=1
 
-CC=$MINGW_CC ./configure --host=${MINGW_CC%-*} --prefix=/
+CC=$MINGW_CC ./configure --host=$MINGW_PREFIX --prefix=/
 make -j$MAKE_JOBS
 
 make DESTDIR=$INSTALL_DIR install
