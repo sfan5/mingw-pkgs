@@ -1,0 +1,19 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=7.50.3
+fetch_web "https://curl.haxx.se/download/curl-$pkgver.tar.bz2" \
+	7b7347d976661d02c84a1f4d6daf40dee377efdc45b9e2c77dedb8acf140d8ec
+unpack_tar "curl-$pkgver.tar.bz2" --strip-components=1
+
+CC=$MINGW_CC ./configure --host=$MINGW_PREFIX --prefix=/ \
+	--enable-ipv6 --with-winssl --disable-ldap \
+	--with-zlib=$(depend_get_path zlib)
+make -j$MAKE_JOBS
+
+make DESTDIR=$INSTALL_DIR install
+rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows
+
+package $pkgver

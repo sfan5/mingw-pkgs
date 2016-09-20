@@ -1,0 +1,18 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=2.7
+fetch_web "http://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.tar.bz2" \
+	d6a451f5b754857d2aa3964fd4473f8bc5c64e879b24516d780fb26bec7f7d48
+unpack_tar "freetype-$pkgver.tar.bz2" --strip-components=1
+
+CC=$MINGW_CC PKG_CONFIG=/bin/false \
+./configure --host=$MINGW_PREFIX --prefix=/ --with-png=no
+make -j$MAKE_JOBS
+
+make DESTDIR=$INSTALL_DIR install
+rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows
+
+package $pkgver
