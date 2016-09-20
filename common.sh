@@ -1,4 +1,4 @@
-##!/bin/bash -eu
+#!/bin/bash -eu
 
 strip_pkg=0
 
