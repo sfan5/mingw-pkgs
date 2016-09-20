@@ -8,13 +8,18 @@ common_init () {
 	BUILDBASE="$PWD/build"
 	PACKAGEDEST="$PWD"
 	mkdir -p $FETCHCACHE $BUILDBASE
-	
 
 	local use64=0
+	local clean=0
+	local jobs=$(grep processor /proc/cpuinfo | wc -l)
 	while [ $# -gt 0 ]; do
 		case "$1" in
+			-j)
+			shift
+			jobs=$1
+			;;
 			--clean)
-			rm -rf $SRCDIR
+			clean=1
 			;;
 			--64)
 			use64=1
@@ -26,6 +31,7 @@ common_init () {
 			echo "This script builds the $CURRENT_PACKAGE_NAME package for Windows."
 			echo "Supported flags:"
 			echo "    -h/--help   Display this text"
+			echo "    -j          Use specified amount of jobs (default: $jobs)"
 			echo "    --clean     Clean before building package"
 			echo "    --64        Build using MinGW-w64"
 			echo "    --strip     Strip EXE and DLL files before packaging"
@@ -50,10 +56,12 @@ common_init () {
 		MINGW_STRIP=i686-mingw32-strip
 		MINGW_TYPE=win32
 	fi
+	MAKE_JOBS=$jobs
 
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	SRCDIR="$builddir/src"
 	INSTALL_DIR="$builddir/pkg"
+	[ $clean -eq 1 ] && rm -rf $SRCDIR
 	[ -d $INSTALL_DIR ] && rm -rf $INSTALL_DIR
 	mkdir -p $SRCDIR $INSTALL_DIR
 	cd $SRCDIR
@@ -68,20 +76,21 @@ fetch_git () {
 		GIT_DIR=$gitdir GIT_WORK_TREE=$SRCDIR git reset HEAD --hard
 	else
 		local branch=master
-		[ ! -z "$2" ] && branch=$2
+		[ $# -ge 2 ] && branch=$2
 		git clone -b $branch --separate-git-dir=$gitdir "$1" $SRCDIR
 	fi
 }
 
 fetch_web () {
 	local filename=${1##*/}
-	[ ! -z "$3" ] && filename=$3
+	[ $# -ge 3 ] && filename=$3
 	[ -f $FETCHCACHE/$filename ] && return 0
 	local filedest=$(mktemp -p $FETCHCACHE -u)
 	hash=$(wget -O- $1 | tee >(sha256sum | cut -d" " -f1) >$filedest)
 	if [ ! "$hash" == "$2" ]; then
 		echo "Hash mismatch for $filename"
-		echo "(expected: $2, actual: $hash)"
+		echo "  expected: $2"
+		echo "  actual: $hash"
 		rm $filedest
 		return 1
 	else

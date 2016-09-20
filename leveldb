@@ -1,7 +1,6 @@
-#!/bin/bash -e
+#!/bin/bash -eu
 
 . ./common.sh
-
 common_init "$@"
 
 fetch_git https://github.com/bitcoin/bitcoin v0.13.0
@@ -23,7 +22,7 @@ sed -r \
 	s/^(PLATFORM_SHARED_VERSIONED)=.*/\1=false/' \
 	-i build_config.mk
 # Finally build
-make
+make -j$MAKE_JOBS
 
 mkdir -p $INSTALL_DIR/{bin,lib}
 cp -r include $INSTALL_DIR
