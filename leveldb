@@ -1,0 +1,35 @@
+#!/bin/bash -e
+
+. ./common.sh
+
+common_init "$@"
+
+fetch_git https://github.com/bitcoin/bitcoin v0.13.0
+
+cd src/leveldb
+# stop Makefile from trying to configure stuff
+sed '/build_detect_platform/d
+	/shell CC="/d' -i Makefile
+# configure stuff ourselves
+TARGET_OS=OS_WINDOWS_CROSSCOMPILE \
+CC=$MINGW_CC \
+CXX=$MINGW_CXX \
+./build_detect_platform build_config.mk ./
+# fix bad choices made by the above script
+sed -r \
+	's/^(PLATFORM_SHARED_CFLAGS)=.*/\1=/
+	s/^(PLATFORM_SHARED_EXT)=.*/\1=dll/
+	s/^(PLATFORM_SHARED_LDFLAGS)=(.*)/\1=-Wl,--out-implib,libleveldb.dll.a \2/
+	s/^(PLATFORM_SHARED_VERSIONED)=.*/\1=false/' \
+	-i build_config.mk
+# Finally build
+make
+
+mkdir -p $INSTALL_DIR/{bin,lib}
+cp -r include $INSTALL_DIR
+cp libleveldb.dll $INSTALL_DIR/bin
+cp libleveldb{.dll,}.a $INSTALL_DIR/lib
+
+major=$(sed -rn 's/.*int kMajorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)
+minor=$(sed -rn 's/.*int kMinorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)
+package $major.$minor
