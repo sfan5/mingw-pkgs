@@ -1,0 +1,41 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=1.8.4
+# URL specifies a mirror because some SF mirrors are beyond slow (~ 10 KB/s)
+fetch_web "http://downloads.sourceforge.net/irrlicht/irrlicht-$pkgver.zip?use_mirror=vorboss" \
+	f42b280bc608e545b820206fe2a999c55f290de5c7509a02bdbeeccc1bf9e433 irrlicht-$pkgver.zip
+unpack_zip irrlicht-$pkgver.zip
+
+cd irrlicht-$pkgver
+buildid=Win32-gcc
+# apply modifications for 64-bit gcc build
+if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
+	sed 's/Win32-gcc/Win64-gcc/g' -i source/Irrlicht/Makefile
+	buildid=Win64-gcc
+	mkdir -p {bin,lib}/Win64-gcc
+	cp bin/Win32-gcc/irrlicht.ico bin/Win64-gcc
+	# enable (and fix) Direct3D9 support [TODO: for 32-bit too]
+	sed -r '/-DNO_IRR_COMPILE_WITH_DIRECT3D_9_/ s/^/#/
+		/^sharedlib_win32: LDFLAGS/ s/-ld3dx9d/-ld3dx9_43 -ldinput8 -ldxguid/' \
+		-i source/Irrlicht/Makefile
+	sed 's/D3DPRESENT_LINEAR_CONTENT/0x00000002L/g' \
+		-i source/Irrlicht/CD3D9Driver.cpp
+fi
+# build shared lib
+make -Csource/Irrlicht clean
+CC=$MINGW_CC CXX=$MINGW_CXX make sharedlib_win32 -Csource/Irrlicht -j$MAKE_JOBS
+# preserve the implib (.dll.a) and clean
+mv lib/$buildid/libIrrlicht.a lib/$buildid/libIrrlicht.dll.a
+make -Csource/Irrlicht clean
+# build static lib
+CC=$MINGW_CC CXX=$MINGW_CXX make staticlib_win32 -Csource/Irrlicht -j$MAKE_JOBS
+
+mkdir -p $INSTALL_DIR/{bin/$buildid,lib}
+cp -r include $INSTALL_DIR
+cp -r bin/$buildid/*.{dll,ico} $INSTALL_DIR/bin/$buildid
+cp -r lib/$buildid $INSTALL_DIR/lib
+
+package $pkgver

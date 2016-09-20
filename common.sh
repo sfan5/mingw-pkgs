@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+##!/bin/bash -eu
 
 strip_pkg=0
 
@@ -101,7 +101,7 @@ fetch_web () {
 }
 
 unpack_zip () {
-	unzip -d $SRCDIR $FETCHCACHE/$1
+	unzip -nd $SRCDIR $FETCHCACHE/$1
 }
 
 unpack_tar () {
