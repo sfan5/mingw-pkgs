@@ -2,6 +2,9 @@
 
 strip_pkg=0
 
+_CUSTOMOPTS_E=__this_is_empty_dont_bother__
+CUSTOMOPTS=($_CUSTOMOPTS_E)
+
 common_init () {
 	CURRENT_PACKAGE_NAME=$(basename "$0")
 	FETCHCACHE="$PWD/dl"
@@ -12,6 +15,11 @@ common_init () {
 	local use64=0
 	local clean=0
 	local jobs=$(grep processor /proc/cpuinfo | wc -l)
+	[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
+	for optspec in "${CUSTOMOPTS[@]}"; do
+		local tmp=${optspec%|*}
+		declare -g ${tmp#*|}=0
+	done
 	while [ $# -gt 0 ]; do
 		case "$1" in
 			-j)
@@ -35,11 +43,28 @@ common_init () {
 			echo "    --clean     Clean before building package"
 			echo "    --64        Build using MinGW-w64"
 			echo "    --strip     Strip EXE and DLL files before packaging"
+			if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
+				echo "Custom options:"
+				for optspec in "${CUSTOMOPTS[@]}"; do
+					printf "    --%-9s %s\n" ${optspec%%|*} "${optspec##*|}"
+				done
+			fi
 			exit 0
 			;;
 			*)
-			echo "Unknown argument: $1" 1>&2
-			exit 1
+			custom=
+			[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
+			for optspec in "${CUSTOMOPTS[@]}"; do
+				[ ! "--${optspec%%|*}" == "$1" ] && continue
+				local tmp=${optspec%|*}
+				custom=${tmp#*|}
+			done
+			if [ -z "$custom" ]; then
+				echo "Unknown argument: $1" 1>&2
+				exit 1
+			else
+				declare -g $custom=1
+			fi
 			;;
 		esac
 		shift
