@@ -28,7 +28,7 @@ else
 fi
 # build using win32 makefile
 make PREFIX=$MINGW_PREFIX- \
-	LOC=$asmdef OBJA=$asmobj \
+	LOC="$asmdef" OBJA=$asmobj \
 	-fwin32/Makefile.gcc -j$MAKE_JOBS
 
 make \
