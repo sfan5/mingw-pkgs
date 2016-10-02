@@ -98,7 +98,6 @@ fetch_git () {
 	local gitdir=$FETCHCACHE/$CURRENT_PACKAGE_NAME.git
 	if [ -d $gitdir ]; then
 		[ -f $SRCDIR/.git ] || git init --separate-git-dir=$gitdir $SRCDIR
-		pwd
 		GIT_DIR=$gitdir git fetch
 		GIT_DIR=$gitdir GIT_WORK_TREE=$SRCDIR git reset HEAD --hard
 	else
