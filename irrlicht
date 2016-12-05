@@ -5,7 +5,7 @@ common_init "$@"
 
 pkgver=1.8.4
 # URL specifies a mirror because some SF mirrors are beyond slow (~ 10 KB/s)
-fetch_web "http://downloads.sourceforge.net/irrlicht/irrlicht-$pkgver.zip?use_mirror=vorboss" \
+fetch_web "http://downloads.sourceforge.net/irrlicht/irrlicht-$pkgver.zip?use_mirror=netcologne" \
 	f42b280bc608e545b820206fe2a999c55f290de5c7509a02bdbeeccc1bf9e433 irrlicht-$pkgver.zip
 unpack_zip irrlicht-$pkgver.zip
 
