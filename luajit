@@ -1,0 +1,26 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=2.1.0-beta2
+fetch_web "http://luajit.org/download/LuaJIT-$pkgver.tar.gz" \
+	713924ca034b9d99c84a0b7b701794c359ffb54f8e3aa2b84fad52d98384cf47
+unpack_tar "LuaJIT-$pkgver.tar.gz" --strip-components=1
+
+# this assumes a 64-bit host os
+if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
+	extra=
+else
+	extra=-m32
+fi
+make \
+	HOST_CC="gcc $extra" BUILDMODE=static \
+	CROSS=$MINGW_PREFIX- TARGET_SYS=Windows \
+	amalg
+
+mkdir -p $INSTALL_DIR/include
+cp src/*.h $INSTALL_DIR/include
+cp src/luajit.exe src/libluajit.a $INSTALL_DIR
+
+package $pkgver
