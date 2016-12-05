@@ -9,7 +9,7 @@ fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
 	36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
-# enably assembly optimizations
+# enable assembly optimizations
 
 if [ $asmdisable -eq 1 ]; then
 	asmdef=

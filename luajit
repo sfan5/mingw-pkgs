@@ -17,7 +17,7 @@ fi
 make \
 	HOST_CC="gcc $extra" BUILDMODE=static \
 	CROSS=$MINGW_PREFIX- TARGET_SYS=Windows \
-	amalg
+	amalg -j$MAKE_JOBS
 
 mkdir -p $INSTALL_DIR/include
 cp src/*.h $INSTALL_DIR/include
