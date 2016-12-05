@@ -23,7 +23,7 @@ if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
 		-i source/Irrlicht/Makefile
 	sed 's/D3DPRESENT_LINEAR_CONTENT/0x00000002L/g' \
 		-i source/Irrlicht/CD3D9Driver.cpp
-	sed '/^#if.*IRR_COMPILE_WITH_DX9_DEV_PACK/ s/^/#define IRR_COMPILE_WITH_DX9_DEV_PACK\n/' \
+	sed 's/defined(IRR_COMPILE_WITH_DX9_DEV_PACK)/1/' \
 		-i include/IrrCompileConfig.h
 fi
 # build shared lib
