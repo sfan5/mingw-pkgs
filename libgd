@@ -1,0 +1,21 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pkgver=2.2.3
+fetch_web "https://github.com/libgd/libgd/releases/download/gd-$pkgver/libgd-$pkgver.tar.xz" \
+	746b6cbd6769a22ff3ba6f5756f3512a769bd4cdf4695dff17f4867f25fa7d3c
+unpack_tar "libgd-$pkgver.tar.xz" --strip-components=1
+
+sed '/HAVE_LIBPNG_TRUE/ s|webpng\S*||' -i src/Makefile.in
+CC=$MINGW_CC PKG_CONFIG=/bin/false \
+./configure --host=$MINGW_PREFIX --prefix=/ --with-png=$(depend_get_path libpng) \
+	 --without-x --disable-werror
+make -j$MAKE_JOBS
+
+make DESTDIR=$INSTALL_DIR install
+rm -rf $INSTALL_DIR/{lib/*.la,lib/pkgconfig} # no pkg-config on windows
+rm -f $INSTALL_DIR/bin/{*.exe,bdftogd} # remove obscure utilities
+
+package $pkgver
