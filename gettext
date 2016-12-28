@@ -1,0 +1,50 @@
+#!/bin/bash -eu
+
+. ./common.sh
+CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
+common_init "$@"
+
+# this is a "dual" package which includes both libiconv and gettext
+iconvver=1.14
+intlver=0.19.8.1
+mkdir -p iconv intl
+fetch_web "http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
+	72b24ded17d687193c3366d0ebe7cde1e6b18f0df8c55438ac95be39e8a30613
+unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
+fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
+	105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4
+unpack_tar "gettext-$intlver.tar.xz" -C intl --strip-components=1
+
+pushd iconv
+./configure --host=$MINGW_PREFIX --prefix=/ \
+	--enable-{static,shared} \
+	--disable-{rpath,nls}
+make -j$MAKE_JOBS
+make DESTDIR=$INSTALL_DIR install
+popd
+pushd intl
+for f in gettext-{runtime,tools}/gnulib-m4/asm-underscore.m4; do
+	v=true
+	[[ "$MINGW_PREFIX" == "x86_64-"* ]] && v=false
+	sed 's|.*grep -E.*gl_asmext.*|if '$v';then|' -i $f
+done
+./configure --host=$MINGW_PREFIX --prefix=/ \
+	--enable-{static,shared} \
+	--disable-{java,rpath,libasprintf,curses} \
+	--with-libiconv-prefix=$INSTALL_DIR \
+	--with-included-{gettext,glib,libcroco,libunistring,libxml} \
+	--without-{git,cvs,xz}
+make -j$MAKE_JOBS
+popd
+
+pushd intl # (iconv installed already)
+make DESTDIR=$INSTALL_DIR install
+popd
+rm -rf $INSTALL_DIR/lib/{*.la,gettext,charset.alias,*.dll} $INSTALL_DIR/share
+if [ $alltools -eq 0 ]; then
+	mv $INSTALL_DIR/{bin,bin.old}; mkdir -p $INSTALL_DIR/bin
+	cp $INSTALL_DIR/bin.old/{*.dll,iconv.exe,msgfmt.exe} $INSTALL_DIR/bin
+	rm -rf $INSTALL_DIR/bin.old
+fi
+
+package $intlver
