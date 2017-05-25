@@ -11,20 +11,18 @@ unpack_zip irrlicht-$pkgver.zip
 
 cd irrlicht-$pkgver
 buildid=Win32-gcc
-# apply modifications for 64-bit gcc build
+# enable Direct3D9 support
+sed -r '/-DNO_IRR_COMPILE_WITH_DIRECT3D_9_/ s/^/#/
+	/^sharedlib_win32: LDFLAGS/ s/-ld3dx9d/-ld3dx9_43 -ldinput8 -ldxguid/' \
+	-i source/Irrlicht/Makefile
+sed 's/defined(IRR_COMPILE_WITH_DX9_DEV_PACK)/1/' \
+	-i include/IrrCompileConfig.h
+# modify makefile for 64-bit gcc build
 if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
 	sed 's/Win32-gcc/Win64-gcc/g' -i source/Irrlicht/Makefile
 	buildid=Win64-gcc
 	mkdir -p {bin,lib}/Win64-gcc
 	cp bin/Win32-gcc/irrlicht.ico bin/Win64-gcc
-	# enable (and fix) Direct3D9 support [TODO: for 32-bit too]
-	sed -r '/-DNO_IRR_COMPILE_WITH_DIRECT3D_9_/ s/^/#/
-		/^sharedlib_win32: LDFLAGS/ s/-ld3dx9d/-ld3dx9_43 -ldinput8 -ldxguid/' \
-		-i source/Irrlicht/Makefile
-	sed 's/D3DPRESENT_LINEAR_CONTENT/0x00000002L/g' \
-		-i source/Irrlicht/CD3D9Driver.cpp
-	sed 's/defined(IRR_COMPILE_WITH_DX9_DEV_PACK)/1/' \
-		-i include/IrrCompileConfig.h
 fi
 # build shared lib
 make -Csource/Irrlicht clean

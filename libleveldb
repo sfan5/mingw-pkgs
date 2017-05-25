@@ -3,7 +3,7 @@
 . ./common.sh
 common_init "$@"
 
-fetch_git https://github.com/bitcoin/bitcoin v0.13.0
+fetch_git https://github.com/bitcoin/bitcoin v0.14.1
 
 cd src/leveldb
 # stop Makefile from trying to configure stuff
@@ -22,12 +22,14 @@ sed -r \
 	s/^(PLATFORM_SHARED_VERSIONED)=.*/\1=false/' \
 	-i build_config.mk
 # Finally build
-make -j$MAKE_JOBS
+make out-shared/libleveldb.dll out-static/libleveldb.a \
+	-j$MAKE_JOBS
 
 mkdir -p $INSTALL_DIR/{bin,lib}
 cp -r include $INSTALL_DIR
-cp libleveldb.dll $INSTALL_DIR/bin
-cp libleveldb{.dll,}.a $INSTALL_DIR/lib
+cp out-shared/libleveldb.dll $INSTALL_DIR/bin
+cp out-static/libleveldb.a $INSTALL_DIR/lib
+cp libleveldb.dll.a $INSTALL_DIR/lib
 
 major=$(sed -rn 's/.*int kMajorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)
 minor=$(sed -rn 's/.*int kMinorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)

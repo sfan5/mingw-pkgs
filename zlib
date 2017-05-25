@@ -4,9 +4,9 @@
 CUSTOMOPTS[0]="no-asm|asmdisable|Don't build with assembly optimizations"
 common_init "$@"
 
-pkgver=1.2.8
+pkgver=1.2.11
 fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
-	36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
+	c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
 # enable assembly optimizations
@@ -16,6 +16,7 @@ if [ $asmdisable -eq 1 ]; then
 	asmobj=
 else
 	if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
+		echo "Warning: asm on x64 seems to be broken, --no-asm is recommend"
 		asmfile=amd64/amd64-match.S
 		asmdef=-DNO_UNDERLINE
 	else

@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=2.7
+pkgver=2.8
 fetch_web "http://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.tar.bz2" \
-	d6a451f5b754857d2aa3964fd4473f8bc5c64e879b24516d780fb26bec7f7d48
+	a3c603ed84c3c2495f9c9331fe6bba3bb0ee65e06ec331e0a0fb52158291b40b
 unpack_tar "freetype-$pkgver.tar.bz2" --strip-components=1
 
 CC=$MINGW_CC PKG_CONFIG=/bin/false \

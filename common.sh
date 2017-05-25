@@ -41,7 +41,7 @@ common_init () {
 			echo "    -h/--help   Display this text"
 			echo "    -j          Use specified amount of jobs (default: $jobs)"
 			echo "    --clean     Clean before building package"
-			echo "    --64        Build using MinGW-w64"
+			echo "    --64        64-bit build"
 			echo "    --strip     Strip EXE and DLL files before packaging"
 			if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
 				echo "Custom options:"
@@ -71,13 +71,13 @@ common_init () {
 	done
 
 	if [ $use64 -eq 1 ]; then
-		MINGW_PREFIX=x86_64-mingw32
+		MINGW_PREFIX=x86_64-w64-mingw32
 		MINGW_CC=$MINGW_PREFIX-gcc
 		MINGW_CXX=$MINGW_PREFIX-g++
 		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win64
 	else
-		MINGW_PREFIX=i686-mingw32
+		MINGW_PREFIX=i686-w64-mingw32
 		MINGW_CC=$MINGW_PREFIX-gcc
 		MINGW_CXX=$MINGW_PREFIX-g++
 		MINGW_STRIP=$MINGW_PREFIX-strip
