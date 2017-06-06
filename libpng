@@ -3,16 +3,15 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.6.26
+pkgver=1.6.29
 fetch_web "http://downloads.sourceforge.net/sourceforge/libpng/libpng-$pkgver.tar.xz" \
-	266743a326986c3dbcee9d89b640595f6b16a293fd02b37d8c91348d317b73f9
+	4245b684e8fe829ebb76186327bb37ce5a639938b219882b53d64bd3cfc5f239
 unpack_tar "libpng-$pkgver.tar.xz" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)
-CC=$MINGW_CC \
-CFLAGS=-I$zlibpath/include LDFLAGS=-L$zlibpath/lib \
+CFLAGS=-I$zlibpath/include LDFLAGS="-L$zlibpath/lib -lwinpthread" \
 ./configure --host=$MINGW_PREFIX --prefix=/
-sed '/^#am__append_7/ s|.*|am__append_7 = $(CFLAGS)|' -i Makefile
+sed '/^#am__append_9/ s|.*|am__append_9 = $(CFLAGS)|' -i Makefile
 make -j$MAKE_JOBS
 
 make DESTDIR=$INSTALL_DIR install
