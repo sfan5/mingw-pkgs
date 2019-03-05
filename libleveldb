@@ -3,12 +3,15 @@
 . ./common.sh
 common_init "$@"
 
-fetch_git https://github.com/bitcoin/bitcoin v0.14.1
+fetch_git https://github.com/bitcoin/bitcoin v0.17.1
 
 cd src/leveldb
 # stop Makefile from trying to configure stuff
 sed '/build_detect_platform/d
 	/shell CC="/d' -i Makefile
+# fix lack of AcceleratedCRC32C() in port_win.cc
+sed -r 's|^(uint32_t AcceleratedCRC32C\(.*);|inline \1 {return 0;}|' -i port/port_win.h
+sed -r 's|^#if defined\(__x86|#if 0 //|' -i port/port_win.cc
 # configure stuff ourselves
 TARGET_OS=OS_WINDOWS_CROSSCOMPILE \
 CC=$MINGW_CC \

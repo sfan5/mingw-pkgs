@@ -14,7 +14,7 @@ common_init () {
 
 	local use64=0
 	local clean=0
-	local jobs=$(grep processor /proc/cpuinfo | wc -l)
+	local jobs=$(grep -c '^processor' /proc/cpuinfo)
 	[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
 	for optspec in "${CUSTOMOPTS[@]}"; do
 		local tmp=${optspec%|*}
@@ -41,7 +41,7 @@ common_init () {
 			echo "    -h/--help   Display this text"
 			echo "    -j          Use specified amount of jobs (default: $jobs)"
 			echo "    --clean     Clean before building package"
-			echo "    --64        64-bit build"
+			echo "    --64        Build for 64-bit"
 			echo "    --strip     Strip EXE and DLL files before packaging"
 			if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
 				echo "Custom options:"
@@ -60,7 +60,7 @@ common_init () {
 				custom=${tmp#*|}
 			done
 			if [ -z "$custom" ]; then
-				echo "Unknown argument: $1" 1>&2
+				echo "Unknown argument: $1" >&2
 				exit 1
 			else
 				declare -g $custom=1
@@ -112,11 +112,11 @@ fetch_web () {
 	[ $# -ge 3 ] && filename=$3
 	[ -f $FETCHCACHE/$filename ] && return 0
 	local filedest=$(mktemp -p $FETCHCACHE -u)
-	hash=$(wget -O- $1 | tee >(sha256sum | cut -d" " -f1) >$filedest)
-	if [ ! "$hash" == "$2" ]; then
-		echo "Hash mismatch for $filename" 1>&2
-		echo "  expected: $2" 1>&2
-		echo "  actual: $hash" 1>&2
+	hash=$(wget -O- "$1" | tee >(sha256sum | cut -d " " -f 1) >$filedest)
+	if [ "$hash" != "$2" ]; then
+		echo "Hash mismatch for $filename" >&2
+		echo "  expected: $2" >&2
+		echo "  actual: $hash" >&2
 		rm $filedest
 		return 1
 	else
@@ -150,7 +150,7 @@ package () {
 depend_get_path () {
 	local p="$BUILDBASE/$1-$MINGW_TYPE/pkg"
 	if [ ! -d $p ]; then
-		echo "The dependency $1 needs to be built first" 1>&2
+		echo "The dependency $1 needs to be built first" >&2
 		return 1
 	else
 		echo $p
