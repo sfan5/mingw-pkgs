@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=7.64.0
+pkgver=7.65.3
 fetch_web "https://curl.haxx.se/download/curl-$pkgver.tar.bz2" \
-	d573ba1c2d1cf9d8533fadcce480d778417964e8d04ccddcc76e591d544cf2eb
+	0a855e83be482d7bc9ea00e05bdb1551a44966076762f9650959179c89fce509
 unpack_tar "curl-$pkgver.tar.bz2" --strip-components=1
 
 CC=$MINGW_CC ./configure --host=$MINGW_PREFIX --prefix=/ \
