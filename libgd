@@ -12,7 +12,7 @@ sed '/HAVE_LIBPNG_TRUE/ s|webpng\S*||' -i src/Makefile.in
 PKG_CONFIG=/bin/false \
 ./configure --host=$MINGW_PREFIX --prefix=/ --with-png=$(depend_get_path libpng) \
 	 --without-x --disable-werror
-make -j$MAKE_JOBS
+make
 
 make DESTDIR=$INSTALL_DIR install
 rm -rf $INSTALL_DIR/{lib/*.la,lib/pkgconfig} # no pkg-config on windows

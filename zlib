@@ -30,7 +30,7 @@ fi
 # build using win32 makefile
 make PREFIX=$MINGW_PREFIX- \
 	LOC="$asmdef" OBJA=$asmobj \
-	-fwin32/Makefile.gcc -j$MAKE_JOBS
+	-fwin32/Makefile.gcc
 
 make \
 	DESTDIR=$INSTALL_DIR SHARED_MODE=1 \

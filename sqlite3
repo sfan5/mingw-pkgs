@@ -11,7 +11,7 @@ fetch_web "https://www.sqlite.org/$pkgver_year/sqlite-autoconf-$pkgver_num.tar.g
 unpack_tar "sqlite-autoconf-$pkgver_num.tar.gz" --strip-components=1
 
 CC=$MINGW_CC ./configure --host=$MINGW_PREFIX --prefix=/ --disable-static-shell
-make -j$MAKE_JOBS
+make
 
 make DESTDIR=$INSTALL_DIR install
 rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows

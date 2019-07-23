@@ -11,11 +11,11 @@ cmake . \
 	-DCMAKE_C_COMPILER=$MINGW_CC \
 	-DCMAKE_CXX_COMPILER=$MINGW_CXX \
 	-DBUILD_SHARED_LIBS=YES -DLEVELDB_BUILD_TESTS=NO
-make leveldb -j$MAKE_JOBS
+make leveldb
 
 # build static lib
 cmake . -DBUILD_SHARED_LIBS=NO
-make leveldb -j$MAKE_JOBS
+make leveldb
 
 mkdir -p $INSTALL_DIR/{bin,lib,include}
 cp -r include/leveldb $INSTALL_DIR/include

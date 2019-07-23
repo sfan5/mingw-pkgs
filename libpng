@@ -12,7 +12,7 @@ zlibpath=$(depend_get_path zlib)
 CFLAGS=-I$zlibpath/include LDFLAGS="-L$zlibpath/lib -lwinpthread" \
 ./configure --host=$MINGW_PREFIX --prefix=/
 sed '/^#am__append_9/ s|.*|am__append_9 = $(CFLAGS)|' -i Makefile
-make -j$MAKE_JOBS
+make
 
 make DESTDIR=$INSTALL_DIR install
 rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows

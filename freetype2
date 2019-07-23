@@ -10,7 +10,7 @@ unpack_tar "freetype-$pkgver.tar.bz2" --strip-components=1
 
 CC=$MINGW_CC PKG_CONFIG=/bin/false \
 ./configure --host=$MINGW_PREFIX --prefix=/ --with-png=no
-make -j$MAKE_JOBS
+make
 
 make DESTDIR=$INSTALL_DIR install
 rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows

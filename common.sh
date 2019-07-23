@@ -83,7 +83,7 @@ common_init () {
 		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win32
 	fi
-	MAKE_JOBS=$jobs
+	export MAKEFLAGS="-j$jobs"
 
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	SRCDIR="$builddir/src"

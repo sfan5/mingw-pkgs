@@ -19,7 +19,7 @@ pushd iconv
 ./configure --host=$MINGW_PREFIX --prefix=/ \
 	--enable-{static,shared} \
 	--disable-{rpath,nls}
-make -j$MAKE_JOBS
+make
 make DESTDIR=$INSTALL_DIR install
 popd
 pushd intl
@@ -35,7 +35,7 @@ done
 	--with-libiconv-prefix=$INSTALL_DIR \
 	--with-included-{gettext,glib,libcroco,libunistring,libxml} \
 	--without-{git,cvs,xz}
-make -j$MAKE_JOBS
+make
 popd
 
 pushd intl # (iconv is already installed)

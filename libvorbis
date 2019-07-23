@@ -12,7 +12,7 @@ oggpath=$(depend_get_path libogg)
 CC=$MINGW_CC \
 OGG_CFLAGS=-I$oggpath/include OGG_LIBS="-L$oggpath/lib -logg" \
 ./configure --host=$MINGW_PREFIX --prefix=/
-make -j$MAKE_JOBS
+make
 
 make DESTDIR=$INSTALL_DIR install
 rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no docs or pkg-config on windows
