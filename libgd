@@ -3,12 +3,11 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=2.2.4
+pkgver=2.2.5
 fetch_web "https://github.com/libgd/libgd/releases/download/gd-$pkgver/libgd-$pkgver.tar.xz" \
-	137f13a7eb93ce72e32ccd7cebdab6874f8cf7ddf31d3a455a68e016ecd9e4e6
+	8c302ccbf467faec732f0741a859eef4ecae22fea2d2ab87467be940842bde51
 unpack_tar "libgd-$pkgver.tar.xz" --strip-components=1
 
-sed '/HAVE_LIBPNG_TRUE/ s|webpng\S*||' -i src/Makefile.in
 PKG_CONFIG=/bin/false \
 ./configure --host=$MINGW_PREFIX --prefix=/ --with-png=$(depend_get_path libpng) \
 	 --without-x --disable-werror

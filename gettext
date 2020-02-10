@@ -5,14 +5,14 @@ CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
 common_init "$@"
 
 # this is a "dual" package which includes both libiconv and gettext
-iconvver=1.15
-intlver=0.19.8.1
+iconvver=1.16
+intlver=0.20.1
 mkdir -p iconv intl
-fetch_web "http://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
-	ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178
-unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
+fetch_web "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
+	e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04
 fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
-	105556dbc5c3fbbc2aa0edb46d22d055748b6f5c7cd7a8d99f8e7eb84e938be4
+	53f02fbbec9e798b0faaf7c73272f83608e835c6288dd58be6c9bb54624a3800
+unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
 unpack_tar "gettext-$intlver.tar.xz" -C intl --strip-components=1
 
 pushd iconv
@@ -22,29 +22,30 @@ pushd iconv
 make
 make DESTDIR=$INSTALL_DIR install
 popd
+#
 pushd intl
-for f in gettext-{runtime,tools}/gnulib-m4/asm-underscore.m4; do
-	v=true
-	[[ "$MINGW_PREFIX" == "x86_64-"* ]] && v=false
-	sed 's|.*grep -E.*gl_asmext.*|if '$v';then|' -i $f
+# gettext really REALLY does not like crosscompiling (also GNU is retarded)
+for dir in gettext-runtime libtextstyle gettext-tools .; do
+	sed -r 's|^(\s*cross_compiling).*|\1=yes|' -i $dir/configure
 done
-# trying to get it to build was too painful so i just set the --prefix...
+sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
+CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
 ./configure --host=$MINGW_PREFIX --prefix=/fuckyou/ \
 	--enable-{static,shared} \
-	--disable-{java,rpath,libasprintf,curses} \
-	--with-libiconv-prefix=$INSTALL_DIR \
-	--with-included-{gettext,glib,libcroco,libunistring,libxml} \
-	--without-{git,cvs,xz}
+	--disable-{java,rpath,libasprintf,curses} --enable-relocatable \
+	--with-included-{gettext,libunistring,libxml}
 make
 popd
 
-pushd intl # (iconv is already installed)
+# (iconv is already installed)
+pushd intl
 make DESTDIR=$INSTALL_DIR install
 pushd $INSTALL_DIR
 cp -r fuckyou/* .
 rm -r fuckyou
 popd
 popd
+#
 rm -rf $INSTALL_DIR/lib/{*.la,gettext,charset.alias,*.dll} $INSTALL_DIR/share
 if [ $alltools -eq 0 ]; then
 	mv $INSTALL_DIR/{bin,bin.old}; mkdir -p $INSTALL_DIR/bin

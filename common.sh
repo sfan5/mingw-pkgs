@@ -151,7 +151,7 @@ depend_get_path () {
 	local p="$BUILDBASE/$1-$MINGW_TYPE/pkg"
 	if [ ! -d $p ]; then
 		echo "The dependency $1 needs to be built first" >&2
-		return 1
+		exit 1
 	else
 		echo $p
 	fi

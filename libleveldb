@@ -3,7 +3,7 @@
 . ./common.sh
 common_init "$@"
 
-fetch_git https://github.com/google/leveldb 1.21
+fetch_git https://github.com/google/leveldb 1.22
 
 # build shared lib
 cmake . \
