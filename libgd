@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=2.2.5
+pkgver=2.3.0
 fetch_web "https://github.com/libgd/libgd/releases/download/gd-$pkgver/libgd-$pkgver.tar.xz" \
-	8c302ccbf467faec732f0741a859eef4ecae22fea2d2ab87467be940842bde51
+	ecd9155b9a417fb3f837f29e5966323796de247789163761dd72dbf83bfcac58
 unpack_tar "libgd-$pkgver.tar.xz" --strip-components=1
 
 PKG_CONFIG=/bin/false \
