@@ -24,14 +24,14 @@ if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
 	mkdir -p {bin,lib}/Win64-gcc
 	cp bin/Win32-gcc/irrlicht.ico bin/Win64-gcc
 fi
+commonopts="CC=$MINGW_CC CXX=$MINGW_CXX NDEBUG=1"
 # build shared lib
-make -Csource/Irrlicht clean
-CC=$MINGW_CC CXX=$MINGW_CXX make sharedlib_win32 -Csource/Irrlicht
+make -Csource/Irrlicht $commonopts sharedlib_win32
 # preserve the implib (.dll.a) and clean
-mv lib/$buildid/libIrrlicht.a lib/$buildid/libIrrlicht.dll.a
+mv lib/$buildid/libIrrlicht{.a,.dll.a}
 make -Csource/Irrlicht clean
 # build static lib
-CC=$MINGW_CC CXX=$MINGW_CXX make staticlib_win32 -Csource/Irrlicht
+make -Csource/Irrlicht $commonopts staticlib_win32
 
 mkdir -p $INSTALL_DIR/{bin/$buildid,lib}
 cp -r include $INSTALL_DIR
