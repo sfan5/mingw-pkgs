@@ -8,14 +8,11 @@ fetch_web "http://luajit.org/download/LuaJIT-$pkgver.tar.gz" \
 	1ad2e34b111c802f9d0cdf019e986909123237a28c746b21295b63c9e785d9c3
 unpack_tar "LuaJIT-$pkgver.tar.gz" --strip-components=1
 
-# this assumes a 64-bit host os
-if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
-	extra=
-else
-	extra=-m32
-fi
+extra=-m${MINGW_TYPE#win}
+[ "$MINGW_TYPE" = "win64" ] && \
+	sed '/ENABLE_GC64/ s|^#||' -i src/Makefile
 make \
-	HOST_CC="gcc $extra" BUILDMODE=static \
+	HOST_CC="cc $extra" BUILDMODE=static \
 	CROSS=$MINGW_PREFIX- TARGET_SYS=Windows \
 	amalg
 

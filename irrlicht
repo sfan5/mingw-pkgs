@@ -18,7 +18,7 @@ sed -r '/-DNO_IRR_COMPILE_WITH_DIRECT3D_9_/ s/^/#/
 sed 's/defined(IRR_COMPILE_WITH_DX9_DEV_PACK)/1/' \
 	-i include/IrrCompileConfig.h
 # modify makefile for 64-bit gcc build
-if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
+if [ "$MINGW_TYPE" = "win64" ]; then
 	sed 's/Win32-gcc/Win64-gcc/g' -i source/Irrlicht/Makefile
 	buildid=Win64-gcc
 	mkdir -p {bin,lib}/Win64-gcc
