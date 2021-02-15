@@ -35,6 +35,6 @@ make \
 	DESTDIR=$INSTALL_DIR SHARED_MODE=1 \
 	BINARY_PATH=/bin INCLUDE_PATH=/include LIBRARY_PATH=/lib \
 	install -fwin32/Makefile.gcc
-rm -r $INSTALL_DIR/lib/pkgconfig # no pkgconfig on windows
+common_tidy
 
 package $pkgver

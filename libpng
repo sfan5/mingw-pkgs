@@ -15,6 +15,6 @@ sed '/^#am__append_9/ s|.*|am__append_9 = $(CFLAGS)|' -i Makefile
 make
 
 make DESTDIR=$INSTALL_DIR install
-rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows
+common_tidy
 
 package $pkgver

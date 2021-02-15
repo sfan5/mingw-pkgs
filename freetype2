@@ -13,6 +13,6 @@ CC=$MINGW_CC PKG_CONFIG=/bin/false \
 make
 
 make DESTDIR=$INSTALL_DIR install
-rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows
+common_tidy
 
 package $pkgver

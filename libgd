@@ -14,7 +14,7 @@ PKG_CONFIG=/bin/false \
 make
 
 make DESTDIR=$INSTALL_DIR install
-rm -rf $INSTALL_DIR/{lib/*.la,lib/pkgconfig} # no pkg-config on windows
 rm -f $INSTALL_DIR/bin/{*.exe,bdftogd} # remove obscure utilities
+common_tidy
 
 package $pkgver

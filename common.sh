@@ -12,6 +12,7 @@ common_init () {
 	PACKAGEDEST="$PWD"
 	mkdir -p $FETCHCACHE $BUILDBASE
 
+	# parse command line
 	local use64=0
 	local clean=0
 	local jobs=$(grep -c '^processor' /proc/cpuinfo)
@@ -70,6 +71,7 @@ common_init () {
 		shift
 	done
 
+	# env vars
 	if [ $use64 -eq 1 ]; then
 		MINGW_PREFIX=x86_64-w64-mingw32
 		MINGW_CC=$MINGW_PREFIX-gcc
@@ -84,7 +86,9 @@ common_init () {
 		MINGW_TYPE=win32
 	fi
 	export MAKEFLAGS="-j$jobs"
+	which wine &>/dev/null && unset DISPLAY
 
+	# set up directories
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	SRCDIR="$builddir/src"
 	INSTALL_DIR="$builddir/pkg"
@@ -134,8 +138,20 @@ unpack_tar () {
 	tar -xva -f $tarfile -C $SRCDIR "$@"
 }
 
+common_tidy () {
+	pushd $INSTALL_DIR >/dev/null
+	find . -name '*.la' -delete
+	# although pkgconfig can work on windows/mingw we don't use it
+	[ -d lib/pkgconfig ] && rm -r lib/pkgconfig
+	[ -d share ] && rm -rf share/{info,man,doc,aclocal}
+	find . -depth -type d -exec rmdir {} \; 2>/dev/null # empty directories
+	popd >/dev/null
+}
+
 _strip_pkg () {
-	find . -name '*.exe' -o -name '*.dll' -exec $MINGW_STRIP {} \;
+	find . -name '*.exe' -exec $MINGW_STRIP {} \;
+	find . -name '*.dll' -exec $MINGW_STRIP --strip-unneeded {} \;
+	find . -name '*.a' -exec $MINGW_STRIP -g {} \;
 }
 
 package () {

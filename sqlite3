@@ -14,6 +14,6 @@ CC=$MINGW_CC ./configure --host=$MINGW_PREFIX --prefix=/ --disable-static-shell
 make
 
 make DESTDIR=$INSTALL_DIR install
-rm -rf $INSTALL_DIR/{share,lib/*.la,lib/pkgconfig} # no manpages or pkg-config on windows
+common_tidy
 
 package $pkgver
