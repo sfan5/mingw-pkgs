@@ -30,7 +30,7 @@ for dir in gettext-runtime libtextstyle gettext-tools .; do
 done
 sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
 CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
-./configure --host=$MINGW_PREFIX --prefix=/fuckyou/ \
+./configure --host=$MINGW_PREFIX --prefix=/fuckoff \
 	--enable-{static,shared} \
 	--disable-{java,rpath,libasprintf,curses} --enable-relocatable \
 	--with-included-{gettext,libunistring,libxml}
@@ -39,17 +39,16 @@ popd
 
 # (iconv is already installed)
 pushd intl
+ln -s . $INSTALL_DIR/fuckoff
 make DESTDIR=$INSTALL_DIR install
-pushd $INSTALL_DIR
-cp -r fuckyou/* .
-rm -r fuckyou
-popd
+rm $INSTALL_DIR/fuckoff
 popd
 #
-rm -rf $INSTALL_DIR/lib/{*.la,gettext,charset.alias,*.dll} $INSTALL_DIR/share
+common_tidy
+rm -rf $INSTALL_DIR/lib/{gettext,*.dll} $INSTALL_DIR/share
 if [ $alltools -eq 0 ]; then
 	mv $INSTALL_DIR/{bin,bin.old}; mkdir -p $INSTALL_DIR/bin
-	cp $INSTALL_DIR/bin.old/{*.dll,iconv.exe,msgfmt.exe} $INSTALL_DIR/bin
+	cp -p $INSTALL_DIR/bin.old/{*.dll,iconv.exe,msgfmt.exe} $INSTALL_DIR/bin
 	rm -rf $INSTALL_DIR/bin.old
 fi
 
