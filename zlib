@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
 . ./common.sh
-CUSTOMOPTS[0]="no-asm|asmdisable|Don't build with assembly optimizations"
+CUSTOMOPTS[0]="no-asm|asmdisable|Don't build with assembly optimizations (x86 only)"
 common_init "$@"
 
 pkgver=1.2.11
@@ -10,19 +10,10 @@ fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
 # enable assembly optimizations
-if [ $asmdisable -eq 1 ]; then
-	asmdef=
-	asmobj=
-else
-	if [[ "$MINGW_PREFIX" == "x86_64-"* ]]; then
-		printf '\e[1;31mWarning: asm on x64 is broken, you should use --no-asm\e[0m\n'
-		asmfile=amd64/amd64-match.S
-		asmdef=-DNO_UNDERLINE
-	else
-		asmfile=asm686/match.S
-		asmdef=
-	fi
-	cp -v contrib/$asmfile match.S
+asmdef=
+asmobj=
+if [[ $asmdisable -eq 0 && "$MINGW_TYPE" = "win32" ]]; then
+	cp -v contrib/asm686/match.S match.S
 	asmdef="-DASMV $asmdef"
 	asmobj=match.o
 fi
