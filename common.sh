@@ -123,20 +123,20 @@ common_init () {
 fetch_git () {
 	local gitdir=$FETCHCACHE/$CURRENT_PACKAGE_NAME.git
 	if [ -d $gitdir ]; then
-		[ -f $SRCDIR/.git ] || git init --separate-git-dir=$gitdir $SRCDIR
+		[ -f "$SRCDIR/.git" ] || git init --separate-git-dir=$gitdir "$SRCDIR"
 		GIT_DIR=$gitdir git fetch
 		GIT_DIR=$gitdir GIT_WORK_TREE=$SRCDIR git reset HEAD --hard
 	else
 		local branch=master
 		[ $# -ge 2 ] && branch=$2
-		git clone -b $branch --separate-git-dir=$gitdir "$1" $SRCDIR
+		git clone -b $branch --separate-git-dir=$gitdir "$1" "$SRCDIR"
 	fi
 }
 
 fetch_web () {
 	local filename=${1##*/}
 	[ $# -ge 3 ] && filename=$3
-	[ -f $FETCHCACHE/$filename ] && return 0
+	[ -f $FETCHCACHE/"$filename" ] && return 0
 	local filedest=$(mktemp -p $FETCHCACHE -u)
 	hash=$(wget -O- "$1" | tee >(sha256sum | cut -d " " -f 1) >$filedest)
 	if [ "$hash" != "$2" ]; then
@@ -146,18 +146,18 @@ fetch_web () {
 		rm $filedest
 		return 1
 	else
-		mv $filedest $FETCHCACHE/$filename
+		mv $filedest "$FETCHCACHE/$filename"
 	fi
 }
 
 unpack_zip () {
-	unzip -nd $SRCDIR $FETCHCACHE/$1
+	unzip -nd "$SRCDIR" "$FETCHCACHE/$1"
 }
 
 unpack_tar () {
 	local tarfile=$FETCHCACHE/$1
 	shift
-	tar -xva -f $tarfile -C $SRCDIR "$@"
+	tar -xva -f "$tarfile" -C "$SRCDIR" "$@"
 }
 
 common_flat_tree () {
