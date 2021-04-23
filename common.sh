@@ -184,11 +184,14 @@ _strip_pkg () {
 }
 
 package () {
+	[[ -z "$1" || "$1" == *" "* ]] && { echo "Version invalid, cannot proceed." >&2; return 1; }
 	local zipfile=$PACKAGEDEST/$CURRENT_PACKAGE_NAME-$1-$MINGW_TYPE.zip
+	rm -f "$zipfile"
+
+	[ -z "$(ls "$INSTALL_DIR")" ] && { echo "Package empty, cannot proceed." >&2; return 1; }
 	pushd $INSTALL_DIR
 	[ $strip_pkg -eq 1 ] && _strip_pkg
-	rm -f $zipfile
-	zip -9ry $zipfile -- *
+	zip -9ry "$zipfile" -- *
 	popd
 }
 
