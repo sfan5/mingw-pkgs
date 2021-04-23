@@ -21,12 +21,24 @@ _usage () {
 	fi
 }
 
+_print_cmake_toolchain () {
+	printf 'set(CMAKE_SYSTEM_NAME Windows)\n'
+	printf 'set(CMAKE_C_COMPILER "%s")\n' $MINGW_CC
+	printf 'set(CMAKE_CXX_COMPILER "%s")\n' $MINGW_CXX
+	printf 'set(CMAKE_RC_COMPILER "%s")\n' $MINGW_PREFIX-windres
+	local rootpath=$(dirname "$(which $MINGW_CC)")/../$MINGW_PREFIX
+	# ^ can we just assume this is the correct one?
+	printf 'set(CMAKE_FIND_ROOT_PATH "%s")\n' "$rootpath"
+	printf 'set(CMAKE_FIND_ROOT_PATH_MODE_%s)\n' \
+		"PROGRAM NEVER" "LIBRARY ONLY" "INCLUDE ONLY"
+}
+
 common_init () {
 	CURRENT_PACKAGE_NAME=$(basename "$0")
 	FETCHCACHE="$PWD/dl"
 	BUILDBASE="$PWD/build"
 	PACKAGEDEST="$PWD"
-	mkdir -p $FETCHCACHE $BUILDBASE
+	mkdir -p "$FETCHCACHE" "$BUILDBASE"
 
 	# parse command line
 	local use64=0
@@ -75,7 +87,7 @@ common_init () {
 		shift
 	done
 
-	# env vars
+	# environment
 	if [ $use64 -eq 1 ]; then
 		MINGW_PREFIX=x86_64-w64-mingw32
 		MINGW_TYPE=win64
@@ -86,19 +98,26 @@ common_init () {
 	MINGW_CC=$MINGW_PREFIX-gcc
 	MINGW_CXX=$MINGW_PREFIX-g++
 	MINGW_STRIP=$MINGW_PREFIX-strip
+
 	export MAKEFLAGS="-j$jobs"
+
+	# make sure wine doesn't show popups or any similar stupid stuff
 	which wine &>/dev/null && unset DISPLAY
 
-	which $MINGW_CC >/dev/null
+	which $MINGW_CC >/dev/null # test that compiler exists
+
+	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
+	mkdir -p "$builddir"
+	CMAKE_TOOLCHAIN="$builddir/toolchain.cmake"
+	_print_cmake_toolchain >"$CMAKE_TOOLCHAIN"
 
 	# set up directories
-	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	SRCDIR="$builddir/src"
 	INSTALL_DIR="$builddir/pkg"
-	[ $clean -eq 1 ] && rm -rf $SRCDIR
-	[ -d $INSTALL_DIR ] && rm -rf $INSTALL_DIR
-	mkdir -p $SRCDIR $INSTALL_DIR
-	cd $SRCDIR
+	[ $clean -eq 1 ] && rm -rf "$SRCDIR"
+	rm -rf "$INSTALL_DIR"
+	mkdir -p "$SRCDIR" "$INSTALL_DIR"
+	cd "$SRCDIR"
 }
 
 fetch_git () {
@@ -141,9 +160,16 @@ unpack_tar () {
 	tar -xva -f $tarfile -C $SRCDIR "$@"
 }
 
+common_flat_tree () {
+	ln -snf . "$INSTALL_DIR/usr"
+	ln -snf . "$INSTALL_DIR/local"
+}
+
 common_tidy () {
 	pushd $INSTALL_DIR >/dev/null
 	find . -name '*.la' -delete
+	# delete symlinks possibly created by common_flat_tree
+	[ -L usr ] && rm -f usr local
 	# although pkgconfig can work on windows/mingw we don't use it
 	[ -d lib/pkgconfig ] && rm -r lib/pkgconfig
 	[ -d share ] && rm -rf share/{info,man,doc,aclocal}

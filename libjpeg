@@ -11,15 +11,13 @@ fetch_web "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-${pkgve
 	d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb "libjpeg-turbo-${pkgver}.tar.gz"
 unpack_tar "libjpeg-turbo-${pkgver}.tar.gz" --strip-components=1
 
-cmake . \
-	-DCMAKE_SYSTEM_NAME=Windows -DCMAKE_SYSTEM_PROCESSOR=${MINGW_PREFIX%%-*} \
-	-DCMAKE_C_COMPILER=$MINGW_CC \
-	-DCMAKE_INSTALL_PREFIX=/
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DCMAKE_SYSTEM_PROCESSOR=${MINGW_PREFIX%%-*}
 make
 
-ln -s . $INSTALL_DIR/usr # ??????
+common_flat_tree
 make DESTDIR=$INSTALL_DIR install
-rm -f $INSTALL_DIR/usr $INSTALL_DIR/bin/*.exe
+rm -f $INSTALL_DIR/bin/*.exe
 common_tidy
 
 package $pkgver

@@ -8,15 +8,11 @@ fetch_web "https://github.com/facebook/zstd/releases/download/v$pkgver/zstd-$pkg
 	29ac74e19ea28659017361976240c4b5c5c24db3b89338731a6feb97c038d293
 unpack_tar "zstd-$pkgver.tar.gz" --strip-components=1
 
-cmake build/cmake \
-	-DCMAKE_SYSTEM_NAME=Windows \
-	-DCMAKE_C_COMPILER=$MINGW_CC \
-	-DCMAKE_INSTALL_PREFIX=/
+cmake build/cmake -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN"
 make
 
-ln -s . $INSTALL_DIR/usr # ?
+common_flat_tree
 make DESTDIR=$INSTALL_DIR install
-rm -f $INSTALL_DIR/usr
 common_tidy
 
 package $pkgver

@@ -3,13 +3,11 @@
 . ./common.sh
 common_init "$@"
 
-fetch_git https://github.com/google/leveldb 1.22
+pkgver=1.22
+fetch_git https://github.com/google/leveldb $pkgver
 
 # build shared lib
-cmake . \
-	-DCMAKE_SYSTEM_NAME=Windows \
-	-DCMAKE_C_COMPILER=$MINGW_CC \
-	-DCMAKE_CXX_COMPILER=$MINGW_CXX \
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DBUILD_SHARED_LIBS=YES -DLEVELDB_BUILD_TESTS=NO
 make leveldb
 
@@ -23,6 +21,4 @@ cp libleveldb.dll $INSTALL_DIR/bin
 cp libleveldb.a $INSTALL_DIR/lib
 cp libleveldb.dll.a $INSTALL_DIR/lib
 
-major=$(sed -rn 's/.*int kMajorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)
-minor=$(sed -rn 's/.*int kMinorVersion = ([0-9]+);$/\1/p' include/leveldb/db.h)
-package $major.$minor
+package $pkgver
