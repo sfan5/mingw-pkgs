@@ -5,6 +5,22 @@ strip_pkg=0
 _CUSTOMOPTS_E=__this_is_empty_dont_bother__
 CUSTOMOPTS=($_CUSTOMOPTS_E)
 
+_usage () {
+	echo "This script builds the $CURRENT_PACKAGE_NAME package for Windows."
+	echo "Supported flags:"
+	echo "    -h/--help   Display this text"
+	echo "    -j          Use specified amount of jobs (default: $jobs)"
+	echo "    --clean     Clean before building package"
+	echo "    --64        Build using 64-bit MinGW"
+	echo "    --strip     Strip binaries/libraries before packaging"
+	if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
+		echo "Custom options:"
+		for optspec in "${CUSTOMOPTS[@]}"; do
+			printf "    --%-9s %s\n" ${optspec%%|*} "${optspec##*|}"
+		done
+	fi
+}
+
 common_init () {
 	CURRENT_PACKAGE_NAME=$(basename "$0")
 	FETCHCACHE="$PWD/dl"
@@ -37,19 +53,7 @@ common_init () {
 			strip_pkg=1
 			;;
 			-h|--help)
-			echo "This script builds the $CURRENT_PACKAGE_NAME package for Windows."
-			echo "Supported flags:"
-			echo "    -h/--help   Display this text"
-			echo "    -j          Use specified amount of jobs (default: $jobs)"
-			echo "    --clean     Clean before building package"
-			echo "    --64        Build for 64-bit"
-			echo "    --strip     Strip EXE and DLL files before packaging"
-			if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
-				echo "Custom options:"
-				for optspec in "${CUSTOMOPTS[@]}"; do
-					printf "    --%-9s %s\n" ${optspec%%|*} "${optspec##*|}"
-				done
-			fi
+			_usage
 			exit 0
 			;;
 			*)
@@ -74,19 +78,18 @@ common_init () {
 	# env vars
 	if [ $use64 -eq 1 ]; then
 		MINGW_PREFIX=x86_64-w64-mingw32
-		MINGW_CC=$MINGW_PREFIX-gcc
-		MINGW_CXX=$MINGW_PREFIX-g++
-		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win64
 	else
 		MINGW_PREFIX=i686-w64-mingw32
-		MINGW_CC=$MINGW_PREFIX-gcc
-		MINGW_CXX=$MINGW_PREFIX-g++
-		MINGW_STRIP=$MINGW_PREFIX-strip
 		MINGW_TYPE=win32
 	fi
+	MINGW_CC=$MINGW_PREFIX-gcc
+	MINGW_CXX=$MINGW_PREFIX-g++
+	MINGW_STRIP=$MINGW_PREFIX-strip
 	export MAKEFLAGS="-j$jobs"
 	which wine &>/dev/null && unset DISPLAY
+
+	which $MINGW_CC >/dev/null
 
 	# set up directories
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
