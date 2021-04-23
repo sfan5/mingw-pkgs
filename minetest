@@ -1,0 +1,69 @@
+#!/bin/bash -eu
+
+. ./common.sh
+common_init "$@"
+
+pushargs () {
+	local replace=$1
+	shift
+	for arg in "$@"; do
+		[[ "$1" == *"$"* ]] && \
+			arg=${arg%%\$*}${replace}${arg#*$}
+		cmake_args+=("$arg")
+	done
+}
+
+# meant for testing compilability, not for serious use
+pkgver=master
+fetch_git https://github.com/minetest/minetest $pkgver
+
+cmake_args=()
+pushargs "$(depend_get_path irrlicht-mt)" \
+	-DIRRLICHT_INCLUDE_DIR='$/include/irrlichtmt' \
+	-DIRRLICHT_LIBRARY='$/lib/libIrrlichtMt.dll.a' \
+	-DIRRLICHT_DLL='$/bin/IrrlichtMt.dll'
+pushargs "$(depend_get_path zlib)" \
+	-DZLIB_INCLUDE_DIR='$/include' \
+	-DZLIB_LIBRARIES='$/lib/libz.dll.a' \
+	-DZLIB_DLL='$/bin/zlib1.dll'
+pushargs "$(depend_get_path luajit)" \
+	-DLUA_INCLUDE_DIR='$/include' \
+	-DLUA_LIBRARY='$/libluajit.a'
+pushargs "$(depend_get_path curl)" \
+	-DCURL_INCLUDE_DIR='$/include' \
+	-DCURL_LIBRARY='$/lib/libcurl.dll.a' \
+	-DCURL_DLL='$/bin/libcurl-4.dll'
+pushargs "$(depend_get_path freetype2)" \
+	-DFREETYPE_INCLUDE_DIR_{freetype2,ft2build}='$/include/freetype2' \
+	-DFREETYPE_LIBRARY='$/lib/libfreetype.dll.a' \
+	-DFREETYPE_DLL='$/bin/libfreetype-6.dll'
+pushargs "$(depend_get_path sqlite3)" \
+	-DSQLITE3_INCLUDE_DIR='$/include' \
+	-DSQLITE3_LIBRARY='$/lib/libsqlite3.dll.a' \
+	-DSQLITE3_DLL='$/bin/libsqlite3-0.dll'
+pushargs "$(depend_get_path libleveldb)" \
+	-DLEVELDB_INCLUDE_DIR='$/include' \
+	-DLEVELDB_LIBRARY='$/lib/libleveldb.dll.a' \
+	-DLEVELDB_DLL='$/bin/libleveldb.dll'
+pushargs "$(depend_get_path openal-soft)" \
+	-DOPENAL_INCLUDE_DIR='$/include/AL' \
+	-DOPENAL_LIBRARY='$/lib/libOpenAL32.dll.a' \
+	-DOPENAL_DLL='$/bin/OpenAL32.dll'
+pushargs "$(depend_get_path libogg)" \
+	-DOGG_INCLUDE_DIR='$/include' \
+	-DOGG_LIBRARY='$/lib/libogg.dll.a' \
+	-DOGG_DLL='$/bin/libogg-0.dll'
+pushargs "$(depend_get_path libvorbis)" \
+	-DVORBIS_INCLUDE_DIR='$/include' \
+	-DVORBIS_LIBRARY='$/lib/libvorbis.dll.a' \
+	-DVORBISFILE_LIBRARY='$/lib/libvorbisfile.dll.a' \
+	-DVORBIS_DLL='$/bin/libvorbis-0.dll'
+
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DRUN_IN_PLACE=1 -DENABLE_GETTEXT=0 \
+	"${cmake_args[@]}"
+make
+
+touch $INSTALL_DIR/dummy.txt
+
+package $pkgver
