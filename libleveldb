@@ -3,7 +3,7 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.22
+pkgver=1.23
 fetch_git https://github.com/google/leveldb $pkgver
 
 # build shared lib
