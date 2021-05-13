@@ -8,11 +8,12 @@ CUSTOMOPTS=($_CUSTOMOPTS_E)
 _usage () {
 	echo "This script builds the $CURRENT_PACKAGE_NAME package for Windows."
 	echo "Supported flags:"
-	echo "    -h/--help   Display this text"
-	echo "    -j          Use specified amount of jobs (default: $jobs)"
-	echo "    --clean     Clean before building package"
-	echo "    --64        Build using 64-bit MinGW"
-	echo "    --strip     Strip binaries/libraries before packaging"
+	echo "    -h/--help         Display this text"
+	echo "    -j <jobs>         Use specified amount of jobs (default: $jobs)"
+	echo "    --clean           Clean before building package"
+	echo "    --64              Build using 64-bit MinGW"
+	echo "    --strip           Strip binaries/libraries before packaging"
+	echo "    --sandbox <mode>  Set build sandboxing mode (auto/yes/no)"
 	if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
 		echo "Custom options:"
 		for optspec in "${CUSTOMOPTS[@]}"; do
@@ -33,16 +34,39 @@ _print_cmake_toolchain () {
 		"PROGRAM NEVER" "LIBRARY ONLY" "INCLUDE ONLY"
 }
 
+_run_bwrap () {
+	local args=(--proc /proc --dev /dev)
+	for p in /bin /etc /lib{,32,64} /sbin /usr; do
+		if [ -L $p ]; then
+			args+=(--symlink "$(readlink $p)" $p)
+		elif [ -d $p ]; then
+			args+=(--ro-bind $p $p)
+		fi
+	done
+	for p in /run /tmp /var /var/{empty,run,tmp}; do
+		args+=(--dir $p)
+	done
+	# if mingw is located somewhere else make sure to bind that too
+	local mingw=$(realpath $(dirname "$(which $MINGW_CC)")/..)
+	[ "$mingw" != "/usr" ] && args+=(--ro-bind "$mingw" "$mingw")
+
+	exec bwrap "${args[@]}" --bind "$PWD" "$PWD" \
+		--unshare-all --share-net --die-with-parent \
+		-- "$@"
+}
+
 common_init () {
 	CURRENT_PACKAGE_NAME=$(basename "$0")
 	FETCHCACHE="$PWD/dl"
 	BUILDBASE="$PWD/build"
 	PACKAGEDEST="$PWD"
 	mkdir -p "$FETCHCACHE" "$BUILDBASE"
+	local args_backup=("$@")
 
 	# parse command line
 	local use64=0
 	local clean=0
+	local sandbox=auto
 	local jobs=$(grep -c '^processor' /proc/cpuinfo)
 	[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
 	for optspec in "${CUSTOMOPTS[@]}"; do
@@ -63,6 +87,10 @@ common_init () {
 			;;
 			--strip)
 			strip_pkg=1
+			;;
+			--sandbox)
+			shift
+			sandbox=$1
 			;;
 			-h|--help)
 			_usage
@@ -99,12 +127,24 @@ common_init () {
 	MINGW_CXX=$MINGW_PREFIX-g++
 	MINGW_STRIP=$MINGW_PREFIX-strip
 
+	which $MINGW_CC >/dev/null # test that compiler exists
+
+	# sandboxing
+	if [[ "$(readlink /proc/1/exe)" == *"/bwrap" ]]; then
+		: # we're inside the sandbox
+	else
+		if [ "$sandbox" = auto ]; then
+			which bwrap &>/dev/null && sandbox=yes
+		elif [ "$sandbox" = yes ]; then
+			which bwrap >/dev/null
+		fi
+		[ "$sandbox" = yes ] && _run_bwrap "$0" "${args_backup[@]}"
+	fi
+
+	# environment (part 2)
 	export MAKEFLAGS="-j$jobs"
 
-	# make sure wine doesn't show popups or any similar stupid stuff
-	which wine &>/dev/null && unset DISPLAY
-
-	which $MINGW_CC >/dev/null # test that compiler exists
+	unset DISPLAY XAUTHORITY
 
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	mkdir -p "$builddir"
