@@ -11,7 +11,7 @@ fetch_web "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-${pkgve
 	d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb "libjpeg-turbo-${pkgver}.tar.gz"
 unpack_tar "libjpeg-turbo-${pkgver}.tar.gz" --strip-components=1
 
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" -DCMAKE_INSTALL_PREFIX=/ \
 	-DCMAKE_SYSTEM_PROCESSOR=${MINGW_PREFIX%%-*}
 make
 
