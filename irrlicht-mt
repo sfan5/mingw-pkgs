@@ -20,8 +20,7 @@ make
 
 common_flat_tree
 make DESTDIR=$INSTALL_DIR install
-mkdir -p $INSTALL_DIR/bin
-mv $INSTALL_DIR/lib/*.dll $INSTALL_DIR/bin
+# can't move DLL since .cmake file references them
 common_tidy
 
 package $pkgver

@@ -19,9 +19,7 @@ fetch_git https://github.com/minetest/minetest $pkgver
 
 cmake_args=()
 pushargs "$(depend_get_path irrlicht-mt)" \
-	-DIRRLICHT_INCLUDE_DIR='$/include/irrlichtmt' \
-	-DIRRLICHT_LIBRARY='$/lib/libIrrlichtMt.dll.a' \
-	-DIRRLICHT_DLL='$/bin/IrrlichtMt.dll'
+	-DCMAKE_PREFIX_PATH='$'
 pushargs "$(depend_get_path zlib)" \
 	-DZLIB_INCLUDE_DIR='$/include' \
 	-DZLIB_LIBRARIES='$/lib/libz.dll.a' \
