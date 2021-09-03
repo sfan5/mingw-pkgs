@@ -238,9 +238,15 @@ package () {
 depend_get_path () {
 	local p="$BUILDBASE/$1-$MINGW_TYPE/pkg"
 	if [ ! -d $p ]; then
-		echo "The dependency $1 needs to be built first" >&2
-		kill $$ # there doesn't seem to be a good way to exit from here
-	else
-		echo $p
+		local p2=$(echo "$PACKAGEDEST/$1-"[!-]*"-$MINGW_TYPE.zip")
+		if [ ! -f "$p2" ]; then
+			echo "The dependency $1 needs to be built first!" >&2
+			kill $$ # there doesn't seem to be a good way to exit from here
+		else
+			echo "Note: The dependency $1 was requested and exists as a ZIP archive, unpacking it." >&2
+			mkdir -p "$p"
+			unzip -q "$p2" -d "$p" || kill $$
+		fi
 	fi
+	printf '%s' "$p"
 }

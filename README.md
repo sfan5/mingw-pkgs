@@ -6,7 +6,8 @@ A collection of scripts to cross-compile various libraries, tools, applications 
 Supports both `i686-w64-mingw32` and `x86_64-w64-mingw32`.
 
 To build any package just run the script, it will produce a `name-X.Y.Z-win??.zip` archive upon completion.
-These archives contain an unix-like `bin`, `include`, `lib` folder structure (DLLs go in `bin`).
+These archives contain an Unix-like `bin`, `include`, `lib` folder structure (DLLs go in `bin`).
+Generally both static and dynamic libraries are built.
 
 Common flags for all scripts:
 * `--clean`: Clean before building package
