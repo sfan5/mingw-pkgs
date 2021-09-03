@@ -12,6 +12,7 @@ zlibpath=$(depend_get_path zlib)
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DZLIB_LIBRARY=$zlibpath/lib/libz.dll.a \
 	-DZLIB_INCLUDE_DIR=$zlibpath/include
+make
 
 common_flat_tree
 make DESTDIR=$INSTALL_DIR install
