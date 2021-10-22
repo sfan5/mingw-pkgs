@@ -22,7 +22,7 @@ pushargs "$(depend_get_path irrlicht-mt)" \
 	-DCMAKE_PREFIX_PATH='$'
 pushargs "$(depend_get_path zlib)" \
 	-DZLIB_INCLUDE_DIR='$/include' \
-	-DZLIB_LIBRARIES='$/lib/libz.dll.a' \
+	-DZLIB_LIBRARY='$/lib/libz.dll.a' \
 	-DZLIB_DLL='$/bin/zlib1.dll'
 pushargs "$(depend_get_path luajit)" \
 	-DLUA_INCLUDE_DIR='$/include' \
@@ -56,6 +56,10 @@ pushargs "$(depend_get_path libvorbis)" \
 	-DVORBIS_LIBRARY='$/lib/libvorbis.dll.a' \
 	-DVORBISFILE_LIBRARY='$/lib/libvorbisfile.dll.a' \
 	-DVORBIS_DLL='$/bin/libvorbis-0.dll'
+pushargs "$(depend_get_path zstd)" \
+	-DZSTD_INCLUDE_DIR='$/include' \
+	-DZSTD_LIBRARY='$/lib/libzstd.dll.a' \
+	-DZSTD_DLL='$/bin/libzstd.dll'
 
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DRUN_IN_PLACE=1 -DENABLE_GETTEXT=0 \
