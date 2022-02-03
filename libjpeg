@@ -6,9 +6,9 @@ common_init "$@"
 which nasm >/dev/null || which yasm >/dev/null || \
 	{ echo >&2 "A standalone assembler is required for this build."; exit 1; }
 
-pkgver=2.0.6
+pkgver=2.1.2
 fetch_web "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-${pkgver}.tar.gz?use_mirror=netcologne" \
-	d74b92ac33b0e3657123ddcf6728788c90dc84dcb6a52013d758af3c4af481bb "libjpeg-turbo-${pkgver}.tar.gz"
+	09b96cb8cbff9ea556a9c2d173485fd19488844d55276ed4f42240e1e2073ce5 "libjpeg-turbo-${pkgver}.tar.gz"
 unpack_tar "libjpeg-turbo-${pkgver}.tar.gz" --strip-components=1
 
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" -DCMAKE_INSTALL_PREFIX=/ \

@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=2.10.4
+pkgver=2.11.1
 fetch_web "https://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.tar.gz" \
-	5eab795ebb23ac77001cfb68b7d4d50b5d6c7469247b0b01b2c953269f658dac
+	f8db94d307e9c54961b39a1cc799a67d46681480696ed72ecf78d4473770f09b
 unpack_tar "freetype-$pkgver.tar.gz" --strip-components=1
 
 PKG_CONFIG=/bin/false PYTHON=missing \
