@@ -3,11 +3,12 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.21.1
+pkgver=1.23.0
 fetch_web "https://github.com/kcat/openal-soft/archive/refs/tags/$pkgver.tar.gz" \
-	8ac17e4e3b32c1af3d5508acfffb838640669b4274606b7892aa796ca9d7467f
+	af2abf9cb539c9d66296a83ba63a75eb5868658d0f0b28b27c556f45e70c5231
 unpack_tar "$pkgver.tar.gz" --strip-components=1
 
+PKG_CONFIG=/bin/false \
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DALSOFT_EXAMPLES=OFF -DALSOFT_NO_CONFIG_UTIL=ON
 make

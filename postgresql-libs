@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=13.4
+pkgver=15.2
 fetch_web "https://ftp.postgresql.org/pub/source/v$pkgver/postgresql-$pkgver.tar.bz2" \
-	ea93e10390245f1ce461a54eb5f99a48d8cabd3a08ce4d652ec2169a357bc0cd
+	99a2171fc3d6b5b5f56b757a7a3cb85d509a38e4273805def23941ed2b8468c7
 unpack_tar "postgresql-$pkgver.tar.bz2" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)

@@ -4,7 +4,7 @@
 CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
 common_init "$@"
 
-# this is a "dual" package which includes both libiconv and gettext
+# this is a joint package which includes both libiconv and gettext
 iconvver=1.16
 intlver=0.20.1
 mkdir -p iconv intl

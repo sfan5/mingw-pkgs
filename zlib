@@ -1,25 +1,15 @@
 #!/bin/bash -eu
 
 . ./common.sh
-CUSTOMOPTS[0]="no-asm|asmdisable|Don't build with assembly optimizations (x86 only)"
 common_init "$@"
 
-pkgver=1.2.11
+pkgver=1.2.13
 fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
-	c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1
+	b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
-# enable assembly optimizations
-asmdef=
-asmobj=
-if [[ $asmdisable -eq 0 && "$MINGW_TYPE" = "win32" ]]; then
-	cp -v contrib/asm686/match.S match.S
-	asmdef="-DASMV $asmdef"
-	asmobj=match.o
-fi
 # build using win32 makefile
 make PREFIX=$MINGW_PREFIX- \
-	LOC="$asmdef" OBJA=$asmobj \
 	-fwin32/Makefile.gcc
 
 make \
