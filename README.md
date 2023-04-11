@@ -1,7 +1,7 @@
 mingw-pkgs
 -----------
 
-A collection of scripts to cross-compile various libraries, tools, applications to Windows via [MinGW](http://mingw-w64.org/doku.php).
+A collection of scripts to cross-compile various libraries, tools, applications to Windows via [MinGW](https://www.mingw-w64.org/).
 
 Supports both `i686-w64-mingw32` and `x86_64-w64-mingw32`.
 
