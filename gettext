@@ -5,13 +5,13 @@ CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
 common_init "$@"
 
 # this is a joint package which includes both libiconv and gettext
-iconvver=1.16
-intlver=0.20.1
+iconvver=1.17
+intlver=0.20.2
 mkdir -p iconv intl
 fetch_web "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
-	e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04
+	8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313
 fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
-	53f02fbbec9e798b0faaf7c73272f83608e835c6288dd58be6c9bb54624a3800
+	b22b818e644c37f6e3d1643a1943c32c3a9bff726d601e53047d2682019ceaba
 unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
 unpack_tar "gettext-$intlver.tar.xz" -C intl --strip-components=1
 
@@ -24,11 +24,10 @@ make DESTDIR=$INSTALL_DIR install
 popd
 #
 pushd intl
-# gettext really REALLY does not like crosscompiling (also GNU is retarded)
+# gettext really REALLY does not like crosscompiling
 for dir in gettext-runtime libtextstyle gettext-tools .; do
 	sed -r 's|^(\s*cross_compiling).*|\1=yes|' -i $dir/configure
 done
-sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
 CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
 ./configure --host=$MINGW_PREFIX --prefix=/fuckoff \
 	--enable-{static,shared} \
