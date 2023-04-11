@@ -28,10 +28,11 @@ pushd intl
 for dir in gettext-runtime libtextstyle gettext-tools .; do
 	sed -r 's|^(\s*cross_compiling).*|\1=yes|' -i $dir/configure
 done
+sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
 CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
 ./configure --host=$MINGW_PREFIX --prefix=/fuckoff \
-	--enable-{static,shared} \
-	--disable-{java,rpath,libasprintf,curses} --enable-relocatable \
+	--enable-{static,shared} --enable-relocatable \
+	--disable-{java,rpath,libasprintf,curses} --without-emacs \
 	--with-included-{gettext,libunistring,libxml}
 make
 popd
