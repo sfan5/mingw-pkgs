@@ -31,7 +31,7 @@ pushargs "$(depend_get_path curl)" \
 	-DCURL_INCLUDE_DIR='$/include' \
 	-DCURL_LIBRARY='$/lib/libcurl.dll.a' \
 	-DCURL_DLL='$/bin/libcurl-4.dll'
-pushargs "$(depend_get_path freetype2)" \
+pushargs "$(depend_get_path freetype)" \
 	-DFREETYPE_INCLUDE_DIR_{freetype2,ft2build}='$/include/freetype2' \
 	-DFREETYPE_LIBRARY='$/lib/libfreetype.dll.a' \
 	-DFREETYPE_DLL='$/bin/libfreetype-6.dll'
