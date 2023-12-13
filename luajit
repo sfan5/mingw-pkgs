@@ -4,8 +4,8 @@
 common_init "$@"
 
 # LuaJIT no longer provides any releases/tags
-pkgver=20230221
-pkgver_commit=505e2c03de35e2718eef0d2d3660712e06dadf1f
+pkgver=20231211
+pkgver_commit=29b0b282f59ac533313199f4f7be79490b7eee51
 fetch_git https://github.com/LuaJIT/LuaJIT
 git checkout -q $pkgver_commit
 
@@ -15,6 +15,7 @@ make \
 	CROSS=$MINGW_PREFIX- TARGET_SYS=Windows \
 	amalg
 
+# different package structure for ... historical reasons
 mkdir -p $INSTALL_DIR/include
 cp src/*.h $INSTALL_DIR/include
 cp src/luajit.exe src/libluajit.a $INSTALL_DIR
