@@ -48,7 +48,9 @@ _run_bwrap () {
 	done
 	# if mingw is located somewhere else make sure to bind that too
 	local mingw=$(realpath $(dirname "$(which $MINGW_CC)")/..)
-	[ "$mingw" != "/usr" ] && args+=(--ro-bind "$mingw" "$mingw")
+	if [[ "$mingw" != /usr && "$mingw" != /usr/* ]]; then
+		args+=(--ro-bind "$mingw" "$mingw")
+	fi
 
 	exec bwrap "${args[@]}" --bind "$PWD" "$PWD" \
 		--unshare-all --share-net --die-with-parent \
@@ -196,13 +198,15 @@ fetch_web () {
 }
 
 unpack_zip () {
-	unzip -nd "$SRCDIR" "$FETCHCACHE/$1"
+	echo "Extracting: $1" >&2
+	unzip -qnd "$SRCDIR" "$FETCHCACHE/$1"
 }
 
 unpack_tar () {
 	local tarfile=$FETCHCACHE/$1
 	shift
-	tar -xva -f "$tarfile" -C "$SRCDIR" "$@"
+	echo "Extracting: $(basename "$tarfile")" >&2
+	tar -xa -f "$tarfile" -C "$SRCDIR" "$@"
 }
 
 common_flat_tree () {
