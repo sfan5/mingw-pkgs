@@ -8,7 +8,6 @@ fetch_web "https://github.com/kcat/openal-soft/archive/refs/tags/$pkgver.tar.gz"
 	dfddf3a1f61059853c625b7bb03de8433b455f2f79f89548cbcbd5edca3d4a4a
 unpack_tar "$pkgver.tar.gz" --strip-components=1
 
-PKG_CONFIG=/bin/false \
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DALSOFT_EXAMPLES=OFF -DALSOFT_NO_CONFIG_UTIL=ON
 make

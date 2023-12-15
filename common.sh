@@ -146,6 +146,11 @@ common_init () {
 
 	unset DISPLAY XAUTHORITY
 
+	# neutralize pkg-config, it's not used
+	export PKG_CONFIG_SYSROOT_DIR=/var/empty
+	export PKG_CONFIG_LIBDIR=/var/empty
+	unset PKG_CONFIG_PATH
+
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	mkdir -p "$builddir"
 	CMAKE_TOOLCHAIN="$builddir/toolchain.cmake"

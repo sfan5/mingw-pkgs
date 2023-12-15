@@ -9,7 +9,6 @@ fetch_web "https://ftp.postgresql.org/pub/source/v$pkgver/postgresql-$pkgver.tar
 unpack_tar "postgresql-$pkgver.tar.bz2" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)
-PKG_CONFIG=/bin/false \
 CFLAGS="-I$zlibpath/include" LDFLAGS="-L$zlibpath/lib" \
 ./configure --host=$MINGW_PREFIX --prefix=/ \
 	--without-{perl,python}

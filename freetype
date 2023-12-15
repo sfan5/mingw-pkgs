@@ -8,7 +8,7 @@ fetch_web "https://download.savannah.gnu.org/releases/freetype/freetype-$pkgver.
 	1ac27e16c134a7f2ccea177faba19801131116fd682efc1f5737037c5db224b5
 unpack_tar "freetype-$pkgver.tar.gz" --strip-components=1
 
-PKG_CONFIG=/bin/false PYTHON=missing \
+PYTHON=missing \
 ./configure --host=$MINGW_PREFIX --prefix=/ --with-png=no
 make
 
