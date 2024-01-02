@@ -11,7 +11,8 @@ _usage () {
 	echo "    -h/--help         Display this text"
 	echo "    -j <jobs>         Use specified amount of jobs (default: $jobs)"
 	echo "    --clean           Clean before building package"
-	echo "    --64              Build using 64-bit MinGW"
+	echo "    --64              Build for 64-bit"
+	echo "    --clang           Use clang over gcc (if you have it)"
 	echo "    --strip           Strip binaries/libraries before packaging"
 	echo "    --sandbox <mode>  Set build sandboxing mode (auto/yes/no)"
 	if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
@@ -24,10 +25,10 @@ _usage () {
 
 _print_cmake_toolchain () {
 	printf 'set(CMAKE_SYSTEM_NAME Windows)\n'
-	printf 'set(CMAKE_C_COMPILER "%s")\n' $MINGW_CC
-	printf 'set(CMAKE_CXX_COMPILER "%s")\n' $MINGW_CXX
+	printf 'set(CMAKE_C_COMPILER "%s")\n' $CC
+	printf 'set(CMAKE_CXX_COMPILER "%s")\n' $CXX
 	printf 'set(CMAKE_RC_COMPILER "%s")\n' $MINGW_PREFIX-windres
-	local rootpath=$(dirname "$(which $MINGW_CC)")/../$MINGW_PREFIX
+	local rootpath=$(dirname "$(which $CC)")/../$MINGW_PREFIX
 	# ^ can we just assume this is the correct one?
 	printf 'set(CMAKE_FIND_ROOT_PATH "%s")\n' "$rootpath"
 	printf 'set(CMAKE_FIND_ROOT_PATH_MODE_%s)\n' \
@@ -47,7 +48,7 @@ _run_bwrap () {
 		args+=(--dir $p)
 	done
 	# if mingw is located somewhere else make sure to bind that too
-	local mingw=$(realpath $(dirname "$(which $MINGW_CC)")/..)
+	local mingw=$(realpath $(dirname "$(which $CC)")/..)
 	if [[ "$mingw" != /usr && "$mingw" != /usr/* ]]; then
 		args+=(--ro-bind "$mingw" "$mingw")
 	fi
@@ -67,6 +68,7 @@ common_init () {
 
 	# parse command line
 	local use64=0
+	local useclang=0
 	local clean=0
 	local sandbox=auto
 	local jobs=$(grep -c '^processor' /proc/cpuinfo)
@@ -87,6 +89,9 @@ common_init () {
 			--64)
 			use64=1
 			;;
+			--clang)
+			useclang=1
+			;;
 			--strip)
 			strip_pkg=1
 			;;
@@ -102,7 +107,7 @@ common_init () {
 			custom=
 			[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
 			for optspec in "${CUSTOMOPTS[@]}"; do
-				[ ! "--${optspec%%|*}" == "$1" ] && continue
+				[[ "--${optspec%%|*}" != "$1" ]] && continue
 				local tmp=${optspec%|*}
 				custom=${tmp#*|}
 			done
@@ -125,11 +130,17 @@ common_init () {
 		MINGW_PREFIX=i686-w64-mingw32
 		MINGW_TYPE=win32
 	fi
-	MINGW_CC=$MINGW_PREFIX-gcc
-	MINGW_CXX=$MINGW_PREFIX-g++
-	MINGW_STRIP=$MINGW_PREFIX-strip
+	if [ $useclang -eq 1 ]; then
+		CC=$MINGW_PREFIX-clang
+		CXX=$CC++
+	else
+		CC=$MINGW_PREFIX-gcc
+		CXX=$MINGW_PREFIX-g++
+	fi
+	STRIP=$MINGW_PREFIX-strip
+	export CC CXX STRIP
 
-	which $MINGW_CC >/dev/null # test that compiler exists
+	which $CC >/dev/null # test that compiler exists
 
 	# sandboxing
 	if [[ "$(readlink /proc/1/exe)" == *"/bwrap" ]]; then
@@ -227,9 +238,9 @@ common_tidy () {
 }
 
 _strip_pkg () {
-	find . -name '*.exe' -exec $MINGW_STRIP {} \;
-	find . -name '*.dll' -exec $MINGW_STRIP --strip-unneeded {} \;
-	find . -name '*.a' -exec $MINGW_STRIP -g {} \;
+	find . -name '*.exe' -exec $STRIP {} \;
+	find . -name '*.dll'  -exec $STRIP --strip-unneeded {} \;
+	find . -name '*.a' -a -not -name '*.dll.a' -exec $STRIP -g {} \;
 }
 
 package () {

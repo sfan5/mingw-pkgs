@@ -9,7 +9,7 @@ fetch_web "http://zlib.net/zlib-$pkgver.tar.gz" \
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
 # build using win32 makefile
-make PREFIX=$MINGW_PREFIX- \
+make PREFIX=$MINGW_PREFIX- CC=$CC \
 	-fwin32/Makefile.gcc
 
 make \

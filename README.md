@@ -16,6 +16,7 @@ Generally both static and dynamic libraries are built.
 Common flags for all scripts:
 * `--clean`: Clean before building package
 * `--64`: Build for 64-bit, default is 32-bit
+* `--clang`: Build with clang instead of gcc (if you have it)
 * `--strip`: Strip binaries/libraries before packaging
 
 Variables/functions available in packaging scripts:
@@ -28,8 +29,7 @@ Variables/functions available in packaging scripts:
 * `common_tidy`: Remove commonly found clutter from the install dir
 * `package` `<pkgver>`: Pack contents of install dir into ZIP archive
 * `$INSTALL_DIR`: Root directory of the package
-* `$MINGW_CC`: target C compiler
-* `$MINGW_CXX`: target C++ compiler
+* `$CC`, `$CXX`, `$STRIP`: set and exported as is standard
 * `$MINGW_PREFIX`: target triple
 * `$MINGW_TYPE`: either `win32` or `win64`
 * `$CMAKE_TOOLCHAIN`: path to a CMake toolchain file, should be used to set the correct settings

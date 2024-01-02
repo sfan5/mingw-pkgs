@@ -22,7 +22,7 @@ ln -snf "gmp-$pkgver_gmp" gmp
 ln -snf "mpfr-$pkgver_mpfr" mpfr
 
 >gdb/doc/gdb.texinfo # skip building documentation
-CC=$MINGW_CC CXX=$MINGW_CXX ./configure --host=$MINGW_PREFIX --prefix=/ \
+./configure --host=$MINGW_PREFIX --prefix=/ \
 	--disable-nls --disable-source-highlight
 make
 
