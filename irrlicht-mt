@@ -10,6 +10,7 @@ pngpath=$(depend_get_path libpng)
 jpegpath=$(depend_get_path libjpeg)
 zlibpath=$(depend_get_path zlib)
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DUSE_SDL2=OFF \
 	-DPNG_LIBRARY=$pngpath/lib/libpng.dll.a \
 	-DPNG_PNG_INCLUDE_DIR=$pngpath/include \
 	-DJPEG_LIBRARY=$jpegpath/lib/libjpeg.dll.a \
