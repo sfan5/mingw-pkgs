@@ -9,11 +9,14 @@ fetch_web "http://downloads.xiph.org/releases/vorbis/libvorbis-$pkgver.tar.xz" \
 unpack_tar "libvorbis-$pkgver.tar.xz" --strip-components=1
 
 oggpath=$(depend_get_path libogg)
-OGG_CFLAGS="-I$oggpath/include" OGG_LIBS="-L$oggpath/lib -logg" \
-./configure --host=$MINGW_PREFIX --prefix=/
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DBUILD_SHARED_LIBS=ON \
+	-DOGG_INCLUDE_DIR="$oggpath/include" -DOGG_LIBRARY="$oggpath/lib/libogg.dll.a"
 make
 
+common_flat_tree
 make DESTDIR=$INSTALL_DIR install
+# can't move DLL since .cmake file references them
 common_tidy
 
 package $pkgver

@@ -8,10 +8,13 @@ fetch_web "http://downloads.xiph.org/releases/ogg/libogg-$pkgver.tar.xz" \
 	c4d91be36fc8e54deae7575241e03f4211eb102afb3fc0775fbbc1b740016705
 unpack_tar "libogg-$pkgver.tar.xz" --strip-components=1
 
-./configure --host=$MINGW_PREFIX --prefix=/
+cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DBUILD_SHARED_LIBS=ON
 make
 
+common_flat_tree
 make DESTDIR=$INSTALL_DIR install
+# can't move DLL since .cmake file references them
 common_tidy
 
 package $pkgver
