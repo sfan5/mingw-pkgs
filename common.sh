@@ -133,6 +133,8 @@ common_init () {
 	if [ $useclang -eq 1 ]; then
 		CC=$MINGW_PREFIX-clang
 		CXX=$CC++
+		# autotools generally assumes MSVC if it doesn't find gnu ld and fails badly
+		export lt_cv_prog_gnu_ld=yes
 	else
 		CC=$MINGW_PREFIX-gcc
 		CXX=$MINGW_PREFIX-g++

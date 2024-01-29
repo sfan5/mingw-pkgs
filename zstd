@@ -8,7 +8,8 @@ fetch_web "https://github.com/facebook/zstd/releases/download/v$pkgver/zstd-$pkg
 	9c4396cc829cfae319a6e2615202e82aad41372073482fce286fac78646d3ee4
 unpack_tar "zstd-$pkgver.tar.gz" --strip-components=1
 
-cmake build/cmake -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN"
+cmake build/cmake -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+	-DZSTD_LEGACY_SUPPORT=OFF
 make
 
 common_flat_tree
