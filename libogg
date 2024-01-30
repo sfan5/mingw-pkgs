@@ -14,7 +14,8 @@ make
 
 common_flat_tree
 make DESTDIR=$INSTALL_DIR install
-# can't move DLL since .cmake file references them
+# wrong DLL name on clang for god knows why
+[[ "$CC" == *-clang ]] && mv $INSTALL_DIR/bin/{lib,}ogg.dll
 common_tidy
 
 package $pkgver
