@@ -15,6 +15,7 @@ fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
 unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
 unpack_tar "gettext-$intlver.tar.xz" -C intl --strip-components=1
 
+### FIXME: won't build shared with clang (autoconf bug) ###
 pushd iconv
 ./configure --host=$MINGW_PREFIX --prefix=/ \
 	--enable-{static,shared} \
