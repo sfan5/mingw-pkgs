@@ -12,7 +12,7 @@ zlibpath=$(depend_get_path zlib)
 mkdir -p cmakebuild
 cd cmakebuild
 cmake .. -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
-	-DFT_REQUIRE_ZLIB=ON \
+	-DBUILD_SHARED_LIBS=ON -DFT_REQUIRE_ZLIB=ON \
 	-DZLIB_INCLUDE_DIR="$zlibpath/include" -DZLIB_LIBRARY="$zlibpath/lib/libz.dll.a"
 make
 
