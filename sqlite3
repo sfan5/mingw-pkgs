@@ -10,7 +10,6 @@ fetch_web "https://www.sqlite.org/$pkgver_year/sqlite-autoconf-$pkgver_num.tar.g
 	1c6719a148bc41cf0f2bbbe3926d7ce3f5ca09d878f1246fcc20767b175bb407
 unpack_tar "sqlite-autoconf-$pkgver_num.tar.gz" --strip-components=1
 
-### FIXME: won't build shared with clang (autoconf bug) ###
 ./configure --host=$MINGW_PREFIX --prefix=/ \
 	--disable-static-shell --disable-{fts{3,4,5},rtree}
 make

@@ -133,16 +133,19 @@ common_init () {
 	if [ $useclang -eq 1 ]; then
 		CC=$MINGW_PREFIX-clang
 		CXX=$CC++
-		# autotools generally assumes MSVC if it doesn't find gnu ld and fails badly
-		export lt_cv_prog_gnu_ld=yes
 	else
 		CC=$MINGW_PREFIX-gcc
 		CXX=$MINGW_PREFIX-g++
 	fi
+	# not sure if it was an gnu autotools bug or my setup but it's safer to
+	# specify the linker lest autoconf gets confused
+	LD=$MINGW_PREFIX-ld
 	STRIP=$MINGW_PREFIX-strip
-	export CC CXX STRIP
+	export CC CXX LD STRIP
 
-	which $CC >/dev/null # test that compiler exists
+	# test that these exist
+	which $CC >/dev/null
+	which $LD >/dev/null
 
 	# sandboxing
 	if [[ "$(readlink /proc/1/exe)" == *"/bwrap" ]]; then
