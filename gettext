@@ -29,6 +29,9 @@ for dir in gettext-runtime libtextstyle gettext-tools .; do
 	sed -r 's|^(\s*cross_compiling).*|\1=yes|' -i $dir/configure
 done
 sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
+for dir in libtextstyle/lib gettext-tools/gnulib-lib gettext-tools/libgettextpo; do
+	sed '/static _Noreturn void/ s|_Noreturn|__attribute_noreturn__|' -i $dir/obstack.c
+done
 CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
 ./configure --host=$MINGW_PREFIX --prefix=/fuckoff \
 	--enable-{static,shared} --enable-relocatable \
