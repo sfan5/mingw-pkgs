@@ -7,6 +7,7 @@ pushargs () {
 	local replace=$1
 	shift
 	for arg in "$@"; do
+		# replace $ as a placeholder
 		[[ "$1" == *"$"* ]] && \
 			arg=${arg%%\$*}${replace}${arg#*$}
 		cmake_args+=("$arg")
@@ -18,8 +19,16 @@ pkgver=master
 fetch_git https://github.com/minetest/minetest $pkgver
 
 cmake_args=()
-pushargs "$(depend_get_path irrlicht-mt)" \
-	-DCMAKE_PREFIX_PATH='$'
+pushargs "$(depend_get_path libpng)" \
+	-DPNG_PNG_INCLUDE_DIR='$/include' \
+	-DPNG_LIBRARY='$/lib/libpng16.dll.a' \
+	-DPNG_DLL='$/bin/libpng16.dll'
+pushargs "$(depend_get_path libjpeg)" \
+	-DJPEG_LIBRARY='$/lib/libjpeg.dll.a' \
+	-DJPEG_INCLUDE_DIR='$/include' \
+	-DJPEG_DLL='$/bin/libjpeg-62.dll'
+pushargs "$(depend_get_path sdl2)" \
+	-DCMAKE_PREFIX_PATH='$/lib/cmake'
 pushargs "$(depend_get_path zlib)" \
 	-DZLIB_INCLUDE_DIR='$/include' \
 	-DZLIB_LIBRARY='$/lib/libz.dll.a' \
