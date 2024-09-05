@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=8.5.0
+pkgver=8.9.1
 fetch_web "https://curl.se/download/curl-$pkgver.tar.bz2" \
-	ce4b6a6655431147624aaf582632a36fe1ade262d5fab385c60f78942dd8d87b
+	b57285d9e18bf12a5f2309fc45244f6cf9cb14734e7454121099dd0a83d669a3
 unpack_tar "curl-$pkgver.tar.bz2" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)

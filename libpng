@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.6.40
+pkgver=1.6.43
 fetch_web "https://downloads.sourceforge.net/sourceforge/libpng/libpng-$pkgver.tar.xz" \
-	535b479b2467ff231a3ec6d92a525906fb8ef27978be4f66dbe05d3f3a01b3a1
+	6a5ca0652392a2d7c9db2ae5b40210843c0bbc081cbd410825ab00cc59f14a6c
 unpack_tar "libpng-$pkgver.tar.xz" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)
