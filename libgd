@@ -13,7 +13,7 @@ zlibpath=$(depend_get_path zlib)
 pngpath=$(depend_get_path libpng)
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DBUILD_STATIC_LIBS=1 -DENABLE_PNG=1 \
-	-DPNG_LIBRARY=$pngpath/lib/libpng.dll.a \
+	-DPNG_LIBRARY=$pngpath/lib/libpng16.dll.a \
 	-DPNG_PNG_INCLUDE_DIR=$pngpath/include \
 	-DZLIB_LIBRARY=$zlibpath/lib/libz.dll.a \
 	-DZLIB_INCLUDE_DIR=$zlibpath/include
