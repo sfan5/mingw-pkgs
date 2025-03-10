@@ -3,15 +3,15 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=8.9.1
+pkgver=8.12.1
 fetch_web "https://curl.se/download/curl-$pkgver.tar.bz2" \
-	b57285d9e18bf12a5f2309fc45244f6cf9cb14734e7454121099dd0a83d669a3
+	18681d84e2791183e0e5e4650ccb2a080c1f3a4e57ed2fbc2457228579d68269
 unpack_tar "curl-$pkgver.tar.bz2" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DBUILD_STATIC_LIBS=ON -DCURL_USE_SCHANNEL=ON \
-	-DCURL_DISABLE_LDAP=ON -DCURL_ZLIB=ON \
+	-DCURL_DISABLE_LDAP=ON -DCURL_USE_LIBPSL=OFF -DCURL_ZLIB=ON \
 	-DZLIB_INCLUDE_DIR="$zlibpath/include" -DZLIB_LIBRARY="$zlibpath/lib/libz.dll.a"
 make
 

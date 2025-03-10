@@ -14,9 +14,9 @@ pushargs () {
 	done
 }
 
-# meant for testing compilability, not for serious use
+# meant for compile testing, does not install anything usable
 pkgver=master
-fetch_git https://github.com/minetest/minetest $pkgver
+fetch_git https://github.com/luanti-org/luanti $pkgver
 
 cmake_args=()
 pushargs "$(depend_get_path libpng)" \

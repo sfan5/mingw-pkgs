@@ -4,8 +4,8 @@
 common_init "$@"
 
 # LuaJIT no longer provides any releases/tags
-pkgver=20240905
-pkgver_commit=87ae18af97fd4de790bb6c476b212e047689cc93
+pkgver=20250113
+pkgver_commit=a4f56a459a588ae768801074b46ba0adcfb49eb1
 fetch_git https://github.com/LuaJIT/LuaJIT
 git checkout -q $pkgver_commit
 
