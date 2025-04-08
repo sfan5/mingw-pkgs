@@ -32,9 +32,7 @@ _print_cmake_toolchain () {
 	# ^ can we just assume this is the correct one?
 	printf 'set(CMAKE_FIND_ROOT_PATH "%s")\n' "$rootpath"
 	printf 'set(CMAKE_FIND_ROOT_PATH_MODE_%s)\n' \
-		"PROGRAM NEVER" "LIBRARY ONLY" "INCLUDE ONLY"
-	# this should work but doesn't?
-	printf 'set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH FALSE)\n'
+		"PROGRAM NEVER" "LIBRARY ONLY" "INCLUDE ONLY" "PACKAGE ONLY"
 }
 
 _run_bwrap () {
