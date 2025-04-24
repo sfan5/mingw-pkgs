@@ -12,6 +12,7 @@ _usage () {
 	echo "    -j <jobs>         Use specified amount of jobs (default: $jobs)"
 	echo "    --clean           Clean before building package"
 	echo "    --64              Build for 64-bit"
+	echo "    --arm64           Build for 64-bit ARM"
 	echo "    --clang           Use clang over gcc (if you have it)"
 	echo "    --strip           Strip binaries/libraries before packaging"
 	echo "    --sandbox <mode>  Set build sandboxing mode (auto/yes/no)"
@@ -24,7 +25,21 @@ _usage () {
 }
 
 _print_cmake_toolchain () {
+	local cpu=
+	# <https://superuser.com/questions/305901/>
+	case "$MINGW_PREFIX" in
+		i686-*)
+		cpu=X86
+		;;
+		x86_64-*)
+		cpu=AMD64
+		;;
+		aarch64-*)
+		cpu=ARM64
+		;;
+	esac
 	printf 'set(CMAKE_SYSTEM_NAME Windows)\n'
+	printf 'set(CMAKE_SYSTEM_PROCESSOR %s)\n' $cpu
 	printf 'set(CMAKE_C_COMPILER "%s")\n' $CC
 	printf 'set(CMAKE_CXX_COMPILER "%s")\n' $CXX
 	printf 'set(CMAKE_RC_COMPILER "%s")\n' $MINGW_PREFIX-windres
@@ -68,6 +83,7 @@ common_init () {
 
 	# parse command line
 	local use64=0
+	local usea64=0
 	local useclang=0
 	local clean=0
 	local sandbox=auto
@@ -88,6 +104,9 @@ common_init () {
 			;;
 			--64)
 			use64=1
+			;;
+			--arm64)
+			usea64=1
 			;;
 			--clang)
 			useclang=1
@@ -123,7 +142,10 @@ common_init () {
 	done
 
 	# environment
-	if [ $use64 -eq 1 ]; then
+	if [ $usea64 -eq 1 ]; then
+		MINGW_PREFIX=aarch64-w64-mingw32
+		MINGW_TYPE=win64-aarch64 # Mozilla uses this naming
+	elif [ $use64 -eq 1 ]; then
 		MINGW_PREFIX=x86_64-w64-mingw32
 		MINGW_TYPE=win64
 	else
@@ -144,8 +166,14 @@ common_init () {
 	export CC CXX LD STRIP
 
 	# test that these exist
-	which $CC >/dev/null
-	which $LD >/dev/null
+	if ! command -v $CC >/dev/null; then
+		echo "$CC not found" >&2
+		exit 1
+	fi
+	if ! command -v $LD >/dev/null; then
+		echo "$LD not found" >&2
+		exit 1
+	fi
 
 	# sandboxing
 	if [[ "$(readlink /proc/1/exe)" == *"/bwrap" ]]; then

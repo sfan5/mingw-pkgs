@@ -12,7 +12,7 @@ fetch_web "https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-${pkgve
 unpack_tar "libjpeg-turbo-${pkgver}.tar.gz" --strip-components=1
 
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" -DCMAKE_INSTALL_PREFIX=/ \
-	-DCMAKE_SYSTEM_PROCESSOR=${MINGW_PREFIX%%-*}
+	-DCMAKE_POLICY_VERSION_MINIMUM=3.5
 make
 
 common_flat_tree
