@@ -43,7 +43,7 @@ _print_cmake_toolchain () {
 	printf 'set(CMAKE_C_COMPILER "%s")\n' $CC
 	printf 'set(CMAKE_CXX_COMPILER "%s")\n' $CXX
 	printf 'set(CMAKE_RC_COMPILER "%s")\n' $MINGW_PREFIX-windres
-	local rootpath=$(dirname "$(which $CC)")/../$MINGW_PREFIX
+	local rootpath=$(dirname "$(command -v $CC)")/../$MINGW_PREFIX
 	# ^ can we just assume this is the correct one?
 	printf 'set(CMAKE_FIND_ROOT_PATH "%s")\n' "$rootpath"
 	printf 'set(CMAKE_FIND_ROOT_PATH_MODE_%s)\n' \
@@ -63,7 +63,7 @@ _run_bwrap () {
 		args+=(--dir $p)
 	done
 	# if mingw is located somewhere else make sure to bind that too
-	local mingw=$(realpath $(dirname "$(which $CC)")/..)
+	local mingw=$(realpath $(dirname "$(command -v $CC)")/..)
 	if [[ "$mingw" != /usr && "$mingw" != /usr/* ]]; then
 		args+=(--ro-bind "$mingw" "$mingw")
 	fi
@@ -180,9 +180,12 @@ common_init () {
 		: # we're inside the sandbox
 	else
 		if [ "$sandbox" = auto ]; then
-			which bwrap &>/dev/null && sandbox=yes
-		elif [ "$sandbox" = yes ]; then
-			which bwrap >/dev/null
+			if command -v bwrap >/dev/null; then
+				echo "Sandbox enabled" >&2
+				sandbox=yes
+			else
+				sandbox=no
+			fi
 		fi
 		[ "$sandbox" = yes ] && _run_bwrap "$0" "${args_backup[@]}"
 	fi

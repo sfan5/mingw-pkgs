@@ -3,27 +3,28 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=14.1
+pkgver=16.3
 pkgver_gmp=6.3.0
-pkgver_mpfr=4.2.1
+pkgver_mpfr=4.2.2
 fetch_web "https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz" \
-	d66df51276143451fcbff464cc8723d68f1e9df45a6a2d5635a54e71643edb80
+	bcfcd095528a987917acf9fff3f1672181694926cc18d609c99d0042c00224c5
 unpack_tar "gdb-$pkgver.tar.xz" --strip-components=1
 # included here to make it easier for me
 fetch_web "https://gmplib.org/download/gmp/gmp-$pkgver_gmp.tar.xz" \
 	a3c2b80201b89e68616f4ad30bc66aee4927c3ce50e33929ca819d5c43538898
 unpack_tar "gmp-$pkgver_gmp.tar.xz"
 fetch_web "https://www.mpfr.org/mpfr-current/mpfr-$pkgver_mpfr.tar.xz" \
-	277807353a6726978996945af13e52829e3abd7a9a5b7fb2793894e18f1fcbb2
+	b67ba0383ef7e8a8563734e2e889ef5ec3c3b898a01d00fa0a6869ad81c6ce01
 unpack_tar "mpfr-$pkgver_mpfr.tar.xz"
 
 # for the build tools to find them:
 ln -snf "gmp-$pkgver_gmp" gmp
 ln -snf "mpfr-$pkgver_mpfr" mpfr
 
->gdb/doc/gdb.texinfo # skip building documentation
+# don't build docs
+MAKEINFO=/bin/false \
 ./configure --host=$MINGW_PREFIX --prefix=/ \
-	--disable-nls --disable-source-highlight
+	--disable-nls --disable-source-highlight --enable-year2038
 make
 
 make DESTDIR=$INSTALL_DIR install
