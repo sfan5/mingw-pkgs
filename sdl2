@@ -4,14 +4,14 @@
 CUSTOMOPTS[0]="full|build_full|Build with all subsystems or options"
 common_init "$@"
 
-pkgver=2.32.2
+pkgver=2.32.10
 fetch_web "https://github.com/libsdl-org/SDL/releases/download/release-$pkgver/SDL2-$pkgver.tar.gz" \
-	c5f30c427fd8107ee4a400c84d4447dd211352512eaf0b6e89cc6a50a2821922
+	5f5993c530f084535c65a6879e9b26ad441169b3e25d789d83287040a9ca5165
 unpack_tar "SDL2-$pkgver.tar.gz"
 
 opts=(
 	-DSDL_TEST=OFF # test framework
-	-DSDL_RENDER=OFF # 2D rendering
+	-DSDL_RENDER=OFF -DSDL_DIRECTX=OFF # 2D rendering
 	-DSDL_AUDIO=OFF # audio output
 	-DSDL_HIDAPI=OFF # USB/HID devices
 )

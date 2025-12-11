@@ -3,10 +3,12 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.24.2
+pkgver=1.24.3
 fetch_web "https://github.com/kcat/openal-soft/archive/refs/tags/$pkgver.tar.gz" \
-	7efd383d70508587fbc146e4c508771a2235a5fc8ae05bf6fe721c20a348bd7c
+	7e1fecdeb45e7f78722b776c5cf30bd33934b961d7fd2a11e0494e064cc631ce
 unpack_tar "$pkgver.tar.gz" --strip-components=1
+# 'malloc' and 'free' undeclared
+sed '/<cstdint>/ s|$|\n#include <cstdlib>|' -i fmt-11.1.1/include/fmt/format.h
 
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
 	-DALSOFT_EXAMPLES=OFF -DALSOFT_UTILS=OFF

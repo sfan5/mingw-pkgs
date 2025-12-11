@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-# LuaJIT no longer provides any releases/tags
-pkgver=20250113
-pkgver_commit=a4f56a459a588ae768801074b46ba0adcfb49eb1
+# LuaJIT is rolling-release
+pkgver=20251206
+pkgver_commit=45b771bb2c693a4cc7e34e79b7d30ab10bb7776a
 fetch_git https://github.com/LuaJIT/LuaJIT
 git checkout -q $pkgver_commit
 
