@@ -3,11 +3,11 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=16.3
+pkgver=17.1
 pkgver_gmp=6.3.0
 pkgver_mpfr=4.2.2
-fetch_web "https://ftp.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz" \
-	bcfcd095528a987917acf9fff3f1672181694926cc18d609c99d0042c00224c5
+fetch_web "https://ftpmirror.gnu.org/gnu/gdb/gdb-$pkgver.tar.xz" \
+	14996f5f74c9f68f5a543fdc45bca7800207f91f92aeea6c2e791822c7c6d876
 unpack_tar "gdb-$pkgver.tar.xz" --strip-components=1
 # included here to make it easier for me
 fetch_web "https://gmplib.org/download/gmp/gmp-$pkgver_gmp.tar.xz" \
