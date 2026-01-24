@@ -10,7 +10,7 @@ unpack_tar "libvorbis-$pkgver.tar.xz" --strip-components=1
 
 oggpath=$(depend_get_path libogg)
 cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
-	-DBUILD_SHARED_LIBS=ON \
+	-DBUILD_SHARED_LIBS=ON -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
 	-DOGG_INCLUDE_DIR="$oggpath/include" -DOGG_LIBRARY="$oggpath/lib/libogg.dll.a"
 make
 
