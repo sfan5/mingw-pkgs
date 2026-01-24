@@ -28,7 +28,8 @@ pushargs "$(depend_get_path libjpeg)" \
 	-DJPEG_INCLUDE_DIR='$/include' \
 	-DJPEG_DLL='$/bin/libjpeg-62.dll'
 pushargs "$(depend_get_path sdl2)" \
-	-DCMAKE_PREFIX_PATH='$/lib/cmake'
+	-DSDL2_DIR='$/lib/cmake/SDL2' \
+	-DSDL2_DLL='$/bin/SDL2.dll'
 pushargs "$(depend_get_path zlib)" \
 	-DZLIB_INCLUDE_DIR='$/include' \
 	-DZLIB_LIBRARY='$/lib/libz.dll.a' \
@@ -39,11 +40,11 @@ pushargs "$(depend_get_path luajit)" \
 pushargs "$(depend_get_path curl)" \
 	-DCURL_INCLUDE_DIR='$/include' \
 	-DCURL_LIBRARY='$/lib/libcurl.dll.a' \
-	-DCURL_DLL='$/bin/libcurl-4.dll'
+	-DCURL_DLL='$/bin/libcurl.dll'
 pushargs "$(depend_get_path freetype)" \
 	-DFREETYPE_INCLUDE_DIR_{freetype2,ft2build}='$/include/freetype2' \
 	-DFREETYPE_LIBRARY='$/lib/libfreetype.dll.a' \
-	-DFREETYPE_DLL='$/bin/libfreetype-6.dll'
+	-DFREETYPE_DLL='$/bin/libfreetype.dll'
 pushargs "$(depend_get_path sqlite3)" \
 	-DSQLITE3_INCLUDE_DIR='$/include' \
 	-DSQLITE3_LIBRARY='$/lib/libsqlite3.dll.a' \
@@ -59,12 +60,12 @@ pushargs "$(depend_get_path openal-soft)" \
 pushargs "$(depend_get_path libogg)" \
 	-DOGG_INCLUDE_DIR='$/include' \
 	-DOGG_LIBRARY='$/lib/libogg.dll.a' \
-	-DOGG_DLL='$/bin/libogg-0.dll'
+	-DOGG_DLL='$/bin/ogg.dll'
 pushargs "$(depend_get_path libvorbis)" \
 	-DVORBIS_INCLUDE_DIR='$/include' \
 	-DVORBIS_LIBRARY='$/lib/libvorbis.dll.a' \
 	-DVORBISFILE_LIBRARY='$/lib/libvorbisfile.dll.a' \
-	-DVORBIS_DLL='$/bin/libvorbis-0.dll'
+	-DVORBIS_DLL='$/bin/libvorbis.dll'
 pushargs "$(depend_get_path zstd)" \
 	-DZSTD_INCLUDE_DIR='$/include' \
 	-DZSTD_LIBRARY='$/lib/libzstd.dll.a' \

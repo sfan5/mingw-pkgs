@@ -9,7 +9,8 @@ pkgver_commit=45b771bb2c693a4cc7e34e79b7d30ab10bb7776a
 fetch_git https://github.com/LuaJIT/LuaJIT
 git checkout -q $pkgver_commit
 
-extra=-m${MINGW_TYPE#win}
+extra=
+[ "$MINGW_TYPE" = win32 ] && extra=-m32
 make \
 	HOST_CC="cc $extra" BUILDMODE=static \
 	CROSS=$MINGW_PREFIX- TARGET_SYS=Windows \
