@@ -18,10 +18,12 @@ Usually both static and dynamic libraries are built.
 
 Common flags for all scripts:
 * `--clean`: Clean before building package
+* `--needed`: Skip build if package already exists
 * `--64`: Build for 64-bit, default is 32-bit
 * `--arm64`: Build for aarch64
 * `--clang`: Build with clang instead of gcc
 * `--strip`: Strip binaries/libraries before packaging
+* `--sandbox` `<mode>`: Set build sandboxing mode (auto/yes/no)
 
 Variables/functions available in packaging scripts:
 * `common_init` `...`: Call this first while forwarding arguments

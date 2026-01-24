@@ -11,9 +11,10 @@ _usage () {
 	echo "    -h/--help         Display this text"
 	echo "    -j <jobs>         Use specified amount of jobs (default: $jobs)"
 	echo "    --clean           Clean before building package"
+	echo "    --needed          Skip build if package already exists"
 	echo "    --64              Build for 64-bit"
 	echo "    --arm64           Build for 64-bit ARM"
-	echo "    --clang           Use clang over gcc (if you have it)"
+	echo "    --clang           Build with clang instead of gcc"
 	echo "    --strip           Strip binaries/libraries before packaging"
 	echo "    --sandbox <mode>  Set build sandboxing mode (auto/yes/no)"
 	if [ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ]; then
@@ -86,6 +87,7 @@ common_init () {
 	local usea64=0
 	local useclang=0
 	local clean=0
+	local needed=0
 	local sandbox=auto
 	local jobs=$(grep -c '^processor' /proc/cpuinfo)
 	[ "$CUSTOMOPTS" != "$_CUSTOMOPTS_E" ] && \
@@ -101,6 +103,9 @@ common_init () {
 			;;
 			--clean)
 			clean=1
+			;;
+			--needed)
+			needed=1
 			;;
 			--64)
 			use64=1
@@ -173,6 +178,15 @@ common_init () {
 	if ! command -v $LD >/dev/null; then
 		echo "$LD not found" >&2
 		exit 1
+	fi
+
+	# check if already built
+	if [ $needed -eq 1 ]; then
+		local tmp=$(echo "$PACKAGEDEST/$CURRENT_PACKAGE_NAME-"[!-]*"-$MINGW_TYPE.zip")
+		if [ -f "$tmp" ]; then
+			echo "Already built: $(basename "$tmp")" >&2
+			exit 0
+		fi
 	fi
 
 	# sandboxing
