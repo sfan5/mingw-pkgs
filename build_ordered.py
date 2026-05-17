@@ -10,6 +10,8 @@ def read_deps() -> dict:
 			mydeps = set()
 			with open(e.path, "r") as f:
 				for line in f:
+					if re.match(r"^\s*#", line):
+						continue
 					m = re.search(r"\$\(\s*depend_get_path\s+([^\)]+)\)", line)
 					if not m:
 						continue
