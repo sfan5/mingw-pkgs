@@ -5,21 +5,22 @@ CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
 common_init "$@"
 
 # this is a joint package which includes both libiconv and gettext
-iconvver=1.17
-intlver=0.20.2
+iconvver=1.19
+intlver=1.0
 mkdir -p iconv intl
 fetch_web "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
-	8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313
+	88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6
 fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
-	b22b818e644c37f6e3d1643a1943c32c3a9bff726d601e53047d2682019ceaba
+	71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7
 unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
 unpack_tar "gettext-$intlver.tar.xz" -C intl --strip-components=1
 
 pushd iconv
-./configure --host=$MINGW_PREFIX --prefix=/ \
+./configure --host=$MINGW_PREFIX \
 	--enable-{static,shared} \
 	--disable-{rpath,nls}
 make
+common_flat_tree
 make DESTDIR=$INSTALL_DIR install
 popd
 #
@@ -28,27 +29,17 @@ pushd intl
 for dir in gettext-runtime libtextstyle gettext-tools .; do
 	sed -r 's|^(\s*cross_compiling).*|\1=yes|' -i $dir/configure
 done
-sed 's/HAVE_FWPRINTF/HAVE_WPRINTF/g' -i gettext-runtime/intl/printf.c
-for dir in libtextstyle/lib gettext-tools/gnulib-lib gettext-tools/libgettextpo; do
-	sed '/static _Noreturn void/ s|_Noreturn|__attribute_noreturn__|' -i $dir/obstack.c
-done
 CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
-./configure --host=$MINGW_PREFIX --prefix=/fuckoff \
+./configure --host=$MINGW_PREFIX \
 	--enable-{static,shared} --enable-relocatable \
 	--disable-{java,rpath,libasprintf,curses} --without-emacs \
 	--with-included-{gettext,libunistring,libxml}
 make
+make DESTDIR=$INSTALL_DIR install
 popd
 
-# (iconv is already installed)
-pushd intl
-ln -s . $INSTALL_DIR/fuckoff
-make DESTDIR=$INSTALL_DIR install
-rm $INSTALL_DIR/fuckoff
-popd
-#
 common_tidy
-rm -rf $INSTALL_DIR/lib/{gettext,*.dll} $INSTALL_DIR/share
+rm -rf $INSTALL_DIR/share
 if [ $alltools -eq 0 ]; then
 	mv $INSTALL_DIR/{bin,bin.old}; mkdir -p $INSTALL_DIR/bin
 	cp -p $INSTALL_DIR/bin.old/{*.dll,iconv.exe,msgfmt.exe} $INSTALL_DIR/bin

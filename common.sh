@@ -277,9 +277,10 @@ common_flat_tree () {
 
 common_tidy () {
 	pushd $INSTALL_DIR >/dev/null
-	find . -name '*.la' -delete
+	find . -name '*.la' -delete # libtool nonsense
 	# delete symlinks possibly created by common_flat_tree
-	[ -L usr ] && rm -f usr local
+	[ -L local ] && rm -f local
+	[ -L usr ] && rm -f usr
 	# although pkgconfig can work on windows/mingw we don't use it
 	[ -d lib/pkgconfig ] && rm -r lib/pkgconfig
 	[ -d share ] && rm -rf share/{info,man,doc,aclocal}
