@@ -4,15 +4,22 @@ def read_deps() -> dict:
 	r = {}
 	with os.scandir(".") as it:
 		for e in it:
-			if not e.is_file() or not os.access(e.path, os.X_OK):
+			# the build scripts are executable scripts with a "bare" name
+			if not e.is_file() or "." in e.name or not os.access(e.path, os.X_OK):
 				continue
-			tmp = set()
+			mydeps = set()
 			with open(e.path, "r") as f:
 				for line in f:
-					m = re.search(r"\$\(\s*depend_get_path\s+([\w-]+)\s*\)", line)
-					if m:
-						tmp.add(m.group(1))
-			r[e.name] = sorted(list(tmp))
+					m = re.search(r"\$\(\s*depend_get_path\s+([^\)]+)\)", line)
+					if not m:
+						continue
+					tmp = m.group(1).strip()
+					if re.match(r"\w[\w-]*", tmp):
+						mydeps.add(tmp)
+					else:
+						print("Warning: Can't determine dependency in %s from line: %s" %
+							(e.name, line.strip()), file=sys.stderr)
+			r[e.name] = sorted(list(mydeps))
 	return r
 
 def build_order(deps: dict, want: list) -> list:
@@ -33,6 +40,7 @@ def build_order(deps: dict, want: list) -> list:
 def run_build(args: list, targets: list):
 	for t in targets:
 		subprocess.check_call(["./%s" % t] + args, stdin=subprocess.DEVNULL)
+		
 
 if __name__ == "__main__":
 	args = []
@@ -58,5 +66,8 @@ if __name__ == "__main__":
 			raise ValueError("Target not found: %s" % t)
 	order = build_order(deps, targets)
 	print("Build order:", ", ".join(order), file=sys.stderr)
-	run_build(args, order)
+	try:
+		run_build(args, order)
+	except KeyboardInterrupt:
+			exit(1)
 	exit(0)
