@@ -11,7 +11,7 @@ unpack_tar "freetype-$pkgver.tar.gz" --strip-components=1
 zlibpath=$(depend_get_path zlib)
 mkdir -p cmakebuild
 cd cmakebuild
-cmake .. -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake .. "${CMAKE_FLAGS[@]}" \
 	-DBUILD_SHARED_LIBS=ON -DFT_REQUIRE_ZLIB=ON \
 	-DZLIB_INCLUDE_DIR="$zlibpath/include" -DZLIB_LIBRARY="$zlibpath/lib/libz.dll.a"
 make

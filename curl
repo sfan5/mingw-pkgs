@@ -17,7 +17,7 @@ options=(
 	-DCURL_ZLIB=ON -DZLIB_INCLUDE_DIR="$zlibpath/include" -DZLIB_LIBRARY="$zlibpath/lib/libz.dll.a"
 	-DCURL_ZSTD=ON -DZSTD_INCLUDE_DIR="$zstdpath/include" -DZSTD_LIBRARY="$zstdpath/lib/libzstd.dll.a"
 )
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" "${options[@]}"
+cmake . "${CMAKE_FLAGS[@]}" "${options[@]}"
 make
 
 common_flat_tree

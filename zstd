@@ -8,7 +8,7 @@ fetch_web "https://github.com/facebook/zstd/releases/download/v$pkgver/zstd-$pkg
 	eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
 unpack_tar "zstd-$pkgver.tar.gz" --strip-components=1
 
-cmake build/cmake -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake build/cmake "${CMAKE_FLAGS[@]}" \
 	-DZSTD_LEGACY_SUPPORT=OFF
 make
 

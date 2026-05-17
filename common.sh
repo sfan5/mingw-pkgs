@@ -195,7 +195,7 @@ common_init () {
 	else
 		if [ "$sandbox" = auto ]; then
 			if command -v bwrap >/dev/null; then
-				echo "Sandbox enabled" >&2
+				echo "Sandboxing enabled" >&2
 				sandbox=yes
 			else
 				sandbox=no
@@ -216,8 +216,12 @@ common_init () {
 
 	local builddir="$BUILDBASE/$CURRENT_PACKAGE_NAME-$MINGW_TYPE"
 	mkdir -p "$builddir"
-	CMAKE_TOOLCHAIN="$builddir/toolchain.cmake"
-	_print_cmake_toolchain >"$CMAKE_TOOLCHAIN"
+	_print_cmake_toolchain >"$builddir/toolchain.cmake"
+	CMAKE_FLAGS=(
+		-Wno-dev
+		-DCMAKE_TOOLCHAIN_FILE="$builddir/toolchain.cmake"
+		-DCMAKE_BUILD_TYPE=Release
+	)
 
 	# set up directories
 	SRCDIR="$builddir/src"

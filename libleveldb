@@ -7,7 +7,7 @@ pkgver=1.23
 fetch_git https://github.com/google/leveldb $pkgver
 
 # build shared lib
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake . "${CMAKE_FLAGS[@]}" \
 	-DBUILD_SHARED_LIBS=YES -DLEVELDB_BUILD_TESTS=NO
 make leveldb
 

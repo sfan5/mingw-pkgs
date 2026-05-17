@@ -11,7 +11,7 @@ fetch_web "https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${pk
 	ecae8008e2cc9ade2f2c1bb9d5e6d4fb73e7c433866a056bd82980741571a022
 unpack_tar "libjpeg-turbo-${pkgver}.tar.gz" --strip-components=1
 
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN"
+cmake . "${CMAKE_FLAGS[@]}" -DCMAKE_INSTALL_PREFIX=/
 make
 
 common_flat_tree

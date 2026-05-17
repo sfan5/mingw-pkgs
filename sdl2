@@ -16,8 +16,7 @@ opts=(
 	-DSDL_HIDAPI=OFF # USB/HID devices
 )
 [ $build_full -eq 1 ] && opts=()
-cmake -S "SDL2-$pkgver" -B . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
-	-DCMAKE_BUILD_TYPE=Release "${opts[@]}"
+cmake -S "SDL2-$pkgver" -B . "${CMAKE_FLAGS[@]}" "${opts[@]}"
 make
 
 common_flat_tree

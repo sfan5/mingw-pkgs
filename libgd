@@ -11,7 +11,7 @@ unpack_tar "libgd-$pkgver.tar.xz" --strip-components=1
 sed 's|SET[(]GD_LIB libgd[)]|set(GD_LIB gd)|' -i CMakeLists.txt # ?!
 zlibpath=$(depend_get_path zlib)
 pngpath=$(depend_get_path libpng)
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake . "${CMAKE_FLAGS[@]}" \
 	-DBUILD_STATIC_LIBS=1 -DENABLE_PNG=1 \
 	-DPNG_LIBRARY=$pngpath/lib/libpng16.dll.a \
 	-DPNG_PNG_INCLUDE_DIR=$pngpath/include \

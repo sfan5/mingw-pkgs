@@ -71,7 +71,7 @@ pushargs "$(depend_get_path zstd)" \
 	-DZSTD_LIBRARY='$/lib/libzstd.dll.a' \
 	-DZSTD_DLL='$/bin/libzstd.dll'
 
-cmake . -DCMAKE_TOOLCHAIN_FILE="$CMAKE_TOOLCHAIN" \
+cmake . "${CMAKE_FLAGS[@]}" \
 	-DRUN_IN_PLACE=1 -DENABLE_GETTEXT=0 \
 	"${cmake_args[@]}"
 make
