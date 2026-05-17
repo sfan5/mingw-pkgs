@@ -234,14 +234,13 @@ common_init () {
 
 fetch_git () {
 	local gitdir=$FETCHCACHE/$CURRENT_PACKAGE_NAME.git
+	local branch="${2:-master}"
 	if [ -d $gitdir ]; then
 		[ -f "$SRCDIR/.git" ] || git init --separate-git-dir=$gitdir "$SRCDIR"
-		GIT_DIR=$gitdir git fetch
-		GIT_DIR=$gitdir GIT_WORK_TREE=$SRCDIR git reset HEAD --hard
+		GIT_DIR=$gitdir git fetch origin "$branch"
+		GIT_DIR=$gitdir GIT_WORK_TREE=$SRCDIR git reset FETCH_HEAD --hard
 	else
-		local branch=master
-		[ $# -ge 2 ] && branch=$2
-		git clone -b $branch --separate-git-dir=$gitdir "$1" "$SRCDIR"
+		git clone -b "$branch" --separate-git-dir=$gitdir "$1" "$SRCDIR"
 	fi
 }
 
