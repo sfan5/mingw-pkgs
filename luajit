@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-# LuaJIT is rolling-release
-pkgver=20260304
-pkgver_commit=89f268b3f745dba80da6350d3cbbb0964f3fdbee
+# LuaJIT is rolling-release, we use the date of the commit
+pkgver=20260330
+pkgver_commit=18b087cd2cd4ddc4a79782bf155383a689d5093d
 fetch_git https://github.com/LuaJIT/LuaJIT
 git checkout -q $pkgver_commit
 
