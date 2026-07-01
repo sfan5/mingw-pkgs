@@ -183,7 +183,7 @@ common_init () {
 	# check if already built
 	if [ $needed -eq 1 ]; then
 		local tmp=$(echo "$PACKAGEDEST/$CURRENT_PACKAGE_NAME-"[!-]*"-$MINGW_TYPE.zip")
-		if [ -f "$tmp" ]; then
+		if [ -s "$tmp" ]; then
 			echo "Already built: $(basename "$tmp")" >&2
 			exit 0
 		fi
@@ -247,17 +247,17 @@ fetch_git () {
 fetch_web () {
 	local filename=${1##*/}
 	[ $# -ge 3 ] && filename=$3
-	[ -f $FETCHCACHE/"$filename" ] && return 0
+	[ -s $FETCHCACHE/"$filename" ] && return 0
 	local filedest=$(mktemp -p $FETCHCACHE -u)
-	hash=$(wget -O- "$1" | tee >(sha256sum | cut -d " " -f 1) >$filedest)
+	hash=$(wget -O- "$1" | tee >(sha256sum | cut -d " " -f 1) >"$filedest")
 	if [ "$hash" != "$2" ]; then
 		echo "Hash mismatch for $filename" >&2
 		echo "  expected: $2" >&2
-		echo "  actual: $hash" >&2
-		rm $filedest
+		echo "  actual:   $hash" >&2
+		rm "$filedest"
 		return 1
 	else
-		mv $filedest "$FETCHCACHE/$filename"
+		mv "$filedest" "$FETCHCACHE/$filename"
 	fi
 }
 

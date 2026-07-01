@@ -3,15 +3,17 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=15.2
+pkgver=18.4
 fetch_web "https://ftp.postgresql.org/pub/source/v$pkgver/postgresql-$pkgver.tar.bz2" \
-	99a2171fc3d6b5b5f56b757a7a3cb85d509a38e4273805def23941ed2b8468c7
+	81a81ec695fb0c7901407defaa1d2f7973617154cf27ba74e3a7ab8e64436094
 unpack_tar "postgresql-$pkgver.tar.bz2" --strip-components=1
+# patch sigsetjmp compatibility define
+sed 's/^#ifdef __MINGW64__$/#if defined(__MINGW64__) \&\& !defined(_UCRT)/' -i src/include/c.h
 
 zlibpath=$(depend_get_path zlib)
 CFLAGS="-I$zlibpath/include" LDFLAGS="-L$zlibpath/lib" \
 ./configure --host=$MINGW_PREFIX --prefix=/ \
-	--without-{perl,python}
+	--without-{perl,python,icu}
 make -C src/interfaces/libpq
 
 for dir in interfaces/libpq include; do
