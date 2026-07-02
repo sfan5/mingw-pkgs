@@ -3,11 +3,11 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=3.51.3
+pkgver=3.53.3
 pkgver_year=2026
-pkgver_num=3510300
+pkgver_num=3530300
 fetch_web "https://www.sqlite.org/$pkgver_year/sqlite-autoconf-$pkgver_num.tar.gz" \
-	81f5be397049b0cae1b167f2225af7646fc0f82e4a9b3c48c9ea3a533e21d77a
+	c917d7db16648ec95f714974ace5e5dcf46b7dc70e26600a0a102a3141125db0
 unpack_tar "sqlite-autoconf-$pkgver_num.tar.gz" --strip-components=1
 
 ./configure --host=$MINGW_PREFIX --prefix=/ \

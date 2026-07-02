@@ -45,20 +45,23 @@ def run_build(args: list, targets: list):
 		
 
 if __name__ == "__main__":
+	def usage(ec):
+		print("Usage: build_ordered.py [flags...] -- <target> [target...]")
+		print("Builds specified targets including dependencies. Flags are passed through.")
+		exit(ec)
+
 	args = []
 	targets = []
 	tmp = False
 	for arg in sys.argv[1:]:
 		if arg in ("-h", "--help"):
-			print("Usage: build_ordered.py [...] -- <target> [target...]")
-			print("Builds specified targets including dependencies. Flags are passed through.")
-			exit(0)
+			usage(0)
 		elif arg == "--":
 			tmp = True
 		else:
 			(targets if tmp else args).append(arg)
 	if not tmp:
-		raise ValueError("Missing -- in arguments")
+		usage(1)
 	targets = list(set(targets))
 	if not targets:
 		raise ValueError("No targets specified")
