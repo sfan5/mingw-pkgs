@@ -8,6 +8,9 @@ fetch_web "https://zlib.net/fossils/zlib-$pkgver.tar.gz" \
 	bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16
 unpack_tar "zlib-$pkgver.tar.gz" --strip-components=1
 
+[ -n "${CFLAGS:-}"  ] && sed '/^CFLAGS *=/d'  -i win32/Makefile.gcc
+[ -n "${LDFLAGS:-}" ] && sed '/^LDFLAGS *=/d' -i win32/Makefile.gcc
+
 # build using win32 makefile
 make PREFIX=$MINGW_PREFIX- CC=$CC \
 	-fwin32/Makefile.gcc
