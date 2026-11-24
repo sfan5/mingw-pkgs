@@ -3,9 +3,9 @@
 . ./common.sh
 common_init "$@"
 
-pkgver=1.11.4
+pkgver=1.12.1
 fetch_web "https://libzip.org/download/libzip-$pkgver.tar.gz" \
-	82e9f2f2421f9d7c2466bbc3173cd09595a88ea37db0d559a9d0a2dc60dc722e
+	3b66fe92cbc768d8d4d16e1427bfb7399e15d9c2795c2fc482e7b30a6332a422
 unpack_tar "libzip-$pkgver.tar.gz" --strip-components=1
 
 zlibpath=$(depend_get_path zlib)
