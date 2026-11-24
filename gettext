@@ -5,11 +5,11 @@ CUSTOMOPTS[0]="all-tools|alltools|Keep all installed gettext tools"
 common_init "$@"
 
 # this is a joint package which includes both libiconv and gettext
-iconvver=1.19
+iconvver=1.19.1
 intlver=1.0
 mkdir -p iconv intl
 fetch_web "https://ftp.gnu.org/pub/gnu/libiconv/libiconv-$iconvver.tar.gz" \
-	88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6
+	9a06844846d664d7122161700c10a64480d7c7bcead3091925a785b38c91edab
 fetch_web "https://ftp.gnu.org/gnu/gettext/gettext-$intlver.tar.xz" \
 	71132a3fb71e68245b8f2ac4e9e97137d3e5c02f415636eb508ae607bc01add7
 unpack_tar "libiconv-$iconvver.tar.gz" -C iconv --strip-components=1
@@ -33,8 +33,8 @@ CPPFLAGS="-I$INSTALL_DIR/include" LDFLAGS="-L$INSTALL_DIR/lib" LIBS="-liconv" \
 ./configure --host=$MINGW_PREFIX \
 	--enable-{static,shared} --enable-relocatable \
 	--disable-{java,rpath,libasprintf,curses} --without-emacs \
-	--with-included-{gettext,libunistring,libxml}
-make
+	--with-included-{gettext,libunistring,libxml} </dev/null
+make </dev/null
 make DESTDIR=$INSTALL_DIR install
 popd
 
